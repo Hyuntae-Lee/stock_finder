@@ -1,0 +1,7 @@
+[package]
+name = "stock_finder"
+version = "0.1.0"
+authors = ["Hyuntae-Lee <kkonchi@gmail.com>"]
+
+[dependencies]
+hyper = "0.10.10"
