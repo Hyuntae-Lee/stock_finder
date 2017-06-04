@@ -2,7 +2,6 @@ use hyper::client::Client;
 use html5ever::parse_document;
 use html5ever::rcdom::{RcDom};
 use html5ever::tendril::TendrilSink;
-
 use encoding::{Encoding, DecoderTrap};
 use encoding::all::WINDOWS_949;
 
@@ -44,4 +43,19 @@ pub fn get_page_html<'a>(code : &str) -> Result<String, &'a str> {
     };
 
     return Ok(html_str);
+}
+
+pub fn parse_html<'a>(html_str: String) -> Result<RcDom, &'a str> {
+    let mut html_bytes = html_str.as_bytes();
+    let parser = parse_document(RcDom::default(), Default::default());
+    let decoder = parser.from_utf8();
+    let dom = match decoder.read_from(&mut html_bytes) {
+        Err(x)  => {
+            println!("{}", x);
+            return Err("parse_html() fail 1");
+        },
+        Ok(x)   => x
+    };
+
+    return Ok(dom);
 }

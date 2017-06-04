@@ -1,10 +1,6 @@
 extern crate hyper;
-extern crate html5ever;
 extern crate encoding;
-
-use html5ever::parse_document;
-use html5ever::rcdom::{RcDom};
-use html5ever::tendril::TendrilSink;
+extern crate html5ever;
 
 mod lib1;
 
@@ -18,7 +14,18 @@ fn main() {
         Ok(x)   => String::from(x)
     };
 
-    let parser = parse_document(RcDom::default(), Default::default());
+    // parse html
+    let dom = match lib1::parse_html(html_str) {
+        Err(x)  => {
+            println!("{}", x);
+            return;
+        },
+        Ok(x)   => x
+    };
 
-    println!("{}", html_str);
+    //
+    let doc_node = dom.document;
+    let node = doc_node.borrow();
+
+    println!("{:?}", node.node);
 }
