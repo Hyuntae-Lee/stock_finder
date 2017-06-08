@@ -27,25 +27,26 @@ fn main() {
         Ok(x)   => x
     };
 
-    // sort text elements
-    let mut queue : Vec<Handle> = Vec::new();
-    let mut text_queue : Vec<StrTendril> = Vec::new();
+    // find text nodes
+    find_text_node(&dom.document);
+}
 
-    queue.push(dom.document);
-    println!("{}", queue.len());
-    for handle in queue {
-        let node = handle.borrow();
-        match node.node {
-            NodeEnum::Text(ref x)    => {
-                println!("{}", x);
-                text_queue.push((*x).clone());
+fn find_text_node(root : &Handle) -> Vec<Handle> {
+    let mut buffer : Vec<Handle> = Vec::new();
+
+    let root_ref = root.borrow();
+    for child in &root_ref.children {
+        let child_ref = child.borrow();
+        match child_ref.node {
+            NodeEnum::Text(_)   => {
+                buffer.push(child.clone());
             },
-            _       => {}
+            _                       => {}
         }
+
+        let buff_for_child = find_text_node(child);
+        buffer.append(buff_for_child);
     }
 
-    for handle in text_queue {
-        let rc_node = &handle;
-        println!("{}", rc_node);
-    }
+    buffer
 }
