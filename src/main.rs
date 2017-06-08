@@ -3,6 +3,8 @@ extern crate encoding;
 extern crate html5ever;
 
 use html5ever::rcdom::{RcDom, Handle, Node, NodeEnum};
+use html5ever::tendril::StrTendril;
+use std::cell::{RefCell, Ref};
 
 mod lib1;
 
@@ -26,28 +28,24 @@ fn main() {
     };
 
     // sort text elements
-    let handle_root = dom.document;
-    //let node = handle_root.borrow();
-
     let mut queue : Vec<Handle> = Vec::new();
-    let mut text_queue : Vec<Handle> = Vec::new();
+    let mut text_queue : Vec<StrTendril> = Vec::new();
 
-    queue.push(handle_root);
-    while queue.len() != 0 {
-        let handle = queue.remove(0);
+    queue.push(dom.document);
+    println!("{}", queue.len());
+    for handle in queue {
         let node = handle.borrow();
-        match &node.node {
-            Text    => {
-                text_queue.push(handle.clone());
+        match node.node {
+            NodeEnum::Text(ref x)    => {
+                println!("{}", x);
+                text_queue.push((*x).clone());
             },
             _       => {}
         }
     }
 
-    while text_queue.len() != 0 {
-        let handle = text_queue.remove(0);
-        println();
+    for handle in text_queue {
+        let rc_node = &handle;
+        println!("{}", rc_node);
     }
-
-    //println!("{:?}", node.node);
 }
