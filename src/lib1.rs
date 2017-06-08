@@ -1,11 +1,33 @@
 use hyper::client::Client;
 use html5ever::parse_document;
-use html5ever::rcdom::{RcDom};
+use html5ever::rcdom::{RcDom, Handle, NodeEnum};
 use html5ever::tendril::TendrilSink;
 use encoding::{Encoding, DecoderTrap};
 use encoding::all::WINDOWS_949;
 
+use std::cell::{Ref};
+
 use std::io::Read;
+
+pub fn find_text_node(root : &Handle) -> Vec<Handle> {
+    let mut buffer : Vec<Handle> = Vec::new();
+
+    let node = root.borrow();
+    for child in &node.children {
+        let child_ref = child.borrow();
+        match child_ref.node {
+            NodeEnum::Text(_)   => {
+                buffer.push(child.clone());
+            },
+            _                       => {}
+        }
+
+        let mut buff_for_child = find_text_node(child);
+        buffer.append(&mut buff_for_child);
+    }
+
+    buffer
+}
 
 pub fn get_page_html<'a>(code : &str) -> Result<String, &'a str> {
     let base_url = "http://finance.naver.com/item/main.nhn?code=";

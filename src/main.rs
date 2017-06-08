@@ -4,7 +4,6 @@ extern crate html5ever;
 
 use html5ever::rcdom::{RcDom, Handle, Node, NodeEnum};
 use html5ever::tendril::StrTendril;
-use std::cell::{RefCell, Ref};
 
 mod lib1;
 
@@ -28,25 +27,10 @@ fn main() {
     };
 
     // find text nodes
-    find_text_node(&dom.document);
-}
+    let text_nodes = lib1::find_text_node(&dom.document);
 
-fn find_text_node(root : &Handle) -> Vec<Handle> {
-    let mut buffer : Vec<Handle> = Vec::new();
-
-    let root_ref = root.borrow();
-    for child in &root_ref.children {
-        let child_ref = child.borrow();
-        match child_ref.node {
-            NodeEnum::Text(_)   => {
-                buffer.push(child.clone());
-            },
-            _                       => {}
-        }
-
-        let buff_for_child = find_text_node(child);
-        buffer.append(buff_for_child);
+    for handle in text_nodes {
+        let node = handle.borrow();
+        println!("{:?}", node.node);
     }
-
-    buffer
 }
