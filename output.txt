@@ -1,0 +1,1028 @@
+이엘피 : 네이버 금융
+            
+                
+        
+             
+            
+ 
+    (function(){        var sUserAgent = navigator.userAgent;        if(/iPhone|iPad/.test(sUserAgent)){            document.write(                [                    '<link rel="apple-touch-icon-precomposed" href="http://static.naver.net/nfinance/ico/iOS6_57X57_iphone3.png"/>',                    '<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://static.naver.net/nfinance/ico/iOS6_72X72_ipad.png" />',                    '<link rel="apple-touch-icon-precomposed" sizes="76x76" href="http://static.naver.net/nfinance/ico/iOS7_76X76_ipad.png" />',                    '<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://static.naver.net/nfinance/ico/iOS6_114X114_iphone4.png" />',                    '<link rel="apple-touch-icon-precomposed" sizes="120x120" href="http://static.naver.net/nfinance/ico/iOS7_120X120_iphone.png" />',                    '<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://static.naver.net/nfinance/ico/iOS6_144X144_ipad_retina.png" />',                    '<link rel="apple-touch-icon-precomposed" sizes="152x152" href="http://static.naver.net/nfinance/ico/iOS7_152X152_ipad_retina.png" />'                ]                .join('\n')            );        }                if(/Android/.test(sUserAgent)){            document.write('<link rel="apple-touch-icon-precomposed" sizes="192x192" href="http://static.naver.net/nfinance/ico/android_192x192_xxxhpdi.png"/>');        }    })();    
+document.domain = 'naver.com';var nclk_evt = 3;nclk_do();
+var nsc="finance.stockend";var ccsrv="cc.naver.com";var gnb_service='finance';var gnb_logout=document.URL; //GNB에서 로그아웃 후 redirect 될 URLvar gnb_template='gnb_common_euckr_quirk'; //사용하고 있는 템플릿 명var gnb_searchbox='off'; //미니 검색창을 on 할지 off 할지. default는 offvar gnb_shortnick='off'; //닉네임 말줄임(10자)을 on할지 off 할지. default는 off.var gnb_naverme_layer_open_callback = function(){   var naverLayerSize = gnbNaverMeLayer.getLayerSize();var me_layers = document.getElementById("me_layers"); me_layers.width=naverLayerSize.width;me_layers.height=naverLayerSize.height;}; var gnb_naverme_layer_close_callback = function(){ var me_layers = document.getElementById("me_layers"); me_layers.width="0";me_layers.height="0";}; 
+메뉴건너뛰고 본문 바로가기
+var gnb_service = "gnbtest";var gnb_template = "gnb_quirks_euckr";var gnb_dark = false;var gnb_brightness = 1;var gnb_logout=encodeURIComponent(location.href);var gnb_one_naver = 1;
+ 
+ 
+네이버
+금융
+ 
+검색
+자동완성 펼치기
+검색
+통합검색
+금융 홈
+국내증시
+해외증시
+시장지표
+펀드
+투자전략
+뉴스
+MY금융
+추천종목
+‘그래도 다시 보자’ 배당주 투자
+'채권왕' 그로스, 美증시 거품 경고…'금융위기 이후 가장 위험'
+올해 3배 오른 ‘비트코인’…믿고 투자해도 될까
+/* lcs 집계 */ lcs_do();/* 검색 자동완성 [ 인자1 : 검색input의 ID, 인자2 : iframe 태그 ID ]   */// AutoComplete 생성smartSearch = new nhn.Autocomplete(// InputManager 생성new nhn.AcInputManager(jindo.$("stock_items")),// DataManager 생성new nhn.AcDataManager("http://ac.finance.naver.com:11002/ac", "jsonp", "get", {                     st: "111",                     r_lt : "111",                     q_enc : "euc-kr",                     r_enc : "euc-kr",                     frm: "stock"}), // ViewManager 생성new nhn.AcStockViewManager(jindo.$("autoFrame"), jindo.$("nautocomplete"), {                                          strMax: 200,                                         listMax: [7, 2, 2],                                         aRedirectUrl : [                            "http://finance.naver.com",                            "http://info.finance.naver.com",                            "http://info.finance.naver.com"]}),// Autocomplete Option             {formId:"search", cookieDomain:"finance.naver.com", cookieName:"NaverCommonStock"});smartSearch.attach({             onFocus: function () {                 var weInput = jindo.$Element('stock_items');                 if (weInput && weInput.hasClass("snb_default")) {                         weInput.text("");                         weInput.removeClass('snb_default');                 }             }         }); /* 통합검색  start ----->  */document.domain = 'naver.com';var sSearchHintText = '종목명·펀드명·환율명·원자재명 입력';function itegrationSearch(){var query = escape(jindo.$('stock_items').value);if ( query == ''  || query == escape(sSearchHintText)){alert ( '검색어를 입력해 주세요.' );return;} window.open('http://search.naver.com/search.naver?sm=sta_hty.finance&where=nexearch&query='+query,'','');return false;}function delayed_submit(object) {if (navigator.userAgent.indexOf('MSIE') == -1) {window.setTimeout(function() {stock_search(object)}, 300);} else {stock_search(object);}return false;}function stock_search (object){query = object.query.value.replace(/^\s*/,'').replace(/\s*$/,'');// trimobject.query.value=query;if ( query == '' || query == sSearchHintText.replace(/^\s*/,'').replace(/\s*$/,'')){alert ( '검색어를 입력해 주세요.' );return;}else {object.submit();}}/* <---------- 통합검색  end */function popup(){win = window.open('http://finance.naver.com/template/group_limit_pop.jsp','finan_popup','width=569 height=278 scrollbars=no status=no');win.focus();}
+   
+function financialInfoCommentToggle() {if(jindo.$Element(jindo.$$.getSingle("div.ly_moreifrs")).visible()) {jindo.$Element(jindo.$$.getSingle("a.more_ifrs")).html("항목별 상세기준 보기");jindo.$Element(jindo.$$.getSingle("a.more_ifrs")).removeClass("fd"); } else { jindo.$Element(jindo.$$.getSingle("a.more_ifrs")).html("항목별 상세기준 닫기"); jindo.$Element(jindo.$$.getSingle("a.more_ifrs")).addClass("fd"); }jindo.$Element(jindo.$$.getSingle("div.ly_moreifrs")).toggle();}
+ 
+addCode('063760');
+fchartStatus.setChartStatus('on');
+.hide_chart {position: absolute;top: 0;left: -9999px;}
+        
+         
+종목 시세 정보
+         
+2017년 06월 09일 10시 54분 기준 장중
+         
+종목명 이엘피
+         
+종목코드 063760 코스닥
+         
+현재가 27,650 전일대비 상승 800 플러스 2.98 퍼센트
+         
+전일가 26,850
+         
+시가 26,900
+         
+고가 27,900
+         
+상한가 34,900
+         
+저가 26,800
+         
+하한가 18,800
+         
+거래량 68,643
+         
+거래대금 1,890백만
+         
+                 
+ 
+이엘피
+063760
+날짜
+2017.06.09  10:54 
+기준(장중)
+실시간
+ 
+기업개요
+ 
+ 
+기업개요
+1999년 10월 설립된 동사는 디스플레이 검사장비의 제조 및 판매사업을 영위하고 있고 주요제품은 OLED 및 LCD 검사장비 등이 있으며 2017년 4월 코넥스 시장에서 코스닥 시장으로 이전상장 하였음
+    
+10년이상의 기술개발을 통해 디스플레이 검사를 위한 구동 및 점등에 대한 원천기술을 보유하고 있으며, 검사를 위한 주변기술(컨텍 등)의 특허를 보유하여 시장경쟁력을 갖추고 있음
+                
+삼성디스플레이, LG전자, LG디스플레이 등 국내 메이저 디스플레이 제조업체와 수년간의 거래관계를 통해 안정적인 거래처를 확보하고 있으며 중국, 대만 등 해외업체와의 지속적인 거래관계를 유지하고 있음
+    
+차기 시장을 대비한 지속적인 연구개발 투자를 통해 고해상도 LCD와 OLED TV용 검사기술 및 플렉서블 디스플레이 구동 및 검사기술 관련 제품을 개발 완료하여 선제적인 시장대응 준비를 완료하였음
+    
+매출구성은 OLED 패널검사 등 99.7%, 임대매출 0.3% 등으로 구성
+    
+출처 : 와이즈에프엔
+   
+ 
+ 
+ 
+ 
+MY STOCK 추가
+빠른주문
+추가할 그룹이 없습니다.
+그룹을 추가해주세요.
+그룹추가
+확인
+닫기
+                    
+                
+                    
+네이버 주식거래연결
+빠른 주문을 도와드립니다!
+                    
+                    
+본 서비스는 고객님의 빠른 주문을 돕기 위해
+증권사의 로그인을 연결
+해드리고 있습니다.
+                    
+고객님이 보유하고 계신 증권사를 클릭한 후
+증권사의 아이디, 비밀번호, 공인인증서로 주문
+을
+하실 수 있습니다. 
+                    
+증권사 로그인 이후 시스템 문제가 발생하면,
+증권사 고객센터로 직접 문의
+ 하시기 바랍니다.   
+                    
+네이버는 증권사 서비스의 시스템 장애에 따른
+법적 책임을 지지 않습니다. 
+                    
+                                        
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                
+            
+            
+                
+                         
+이엘피
+                         
+오늘의시세 27,650 포인트
+                         
+800 포인트 상승
+                         
+2.98% 플러스
+                 
+                                
+27,650
+2
+7
+,
+6
+5
+0
+전일대비
+상승
+800
+8
+0
+0
+l
++
+2.98
+2
+.
+9
+8
+%
+주요 시세
+전일
+26,850
+2
+6
+,
+8
+5
+0
+고가
+27,900
+2
+7
+,
+9
+0
+0
+(상한가
+34,900
+3
+4
+,
+9
+0
+0
+)
+거래량
+68,643
+6
+8
+,
+6
+4
+3
+시가
+26,900
+2
+6
+,
+9
+0
+0
+저가
+26,800
+2
+6
+,
+8
+0
+0
+(하한가
+1
+8
+,
+8
+0
+0
+)
+거래대금
+1,890
+1
+,
+8
+9
+0
+백만
+종목 시세 차트
+ 
+ 
+1일
+ 
+1주
+ 
+3개월
+ 
+1년
+ 
+3년
+ 
+ 
+이미지 차트
+ 
+ 
+ 
+<div class="today"><p class="no_today">{if rf == 1 || rf == 2}<em class="no_up">{elseif rf == 4 || rf == 5}<em class="no_down">{else}<em class="X">{/if}{js numberFont(changeNumberFormat(=nv))}</em></p><p class="no_exday"><span class="sptxt sp_txt1">전일대비</span>{if rf == 1}<em class="no_up"><span class="ico up_price">상한가</span>{elseif rf == 2}<em class="no_up"><span class="ico up">상승</span>{elseif rf == 4}<em class="no_down"><span class="ico down_price">하한가</span>{elseif rf == 5}<em class="no_down"><span class="ico down">하락</span>{else}<em class="X"><span class="ico sam">보합</span>{/if}{js numberFont(changeNumberFormat(=cv))}</em><span class="bar">l</span>{if rf == 1 || rf == 2}<em class="no_up"><span class="ico plus">+</span>{elseif rf == 4 || rf == 5}<em class="no_down"><span class="ico minus">-</span>{else}<em class="X">{/if}{js numberFont(changeNumberFormat(=cr.toFixed(2)))}<span class="per">%</span></em></p></div><table summary="주요 시세(전일종가, 시고저가, 거래량, 거래대금)을 제공합니다." class="no_info"><caption>주요 시세</caption><colgroup><col><col width="214"><col width="157"></colgroup><tr><td class="first"><span class="sptxt sp_txt2">전일</span><em>                {if sv == 0}{js numberFont(changeNumberFormat(=pcv))}                {else}{js numberFont(changeNumberFormat(=sv))}                {/if}</em></td><td><span class="sptxt sp_txt4">고가</span>{if tyn == "Y"}<em>{else}{if hv == 0}<em>{elseif pcv < hv}<em class="no_up">{elseif pcv > hv}<em class="no_down">{else}<em>{/if}{/if}{if ms == "PREOPEN"}{js numberFont(0)}{else}{js numberFont(changeNumberFormat(=hv))}{/if}</em><span class="sptxt sp_txt6">(상한가</span><em class="no_cha">{if ms == "PREOPEN"}{js numberFont(0)}{else}{js numberFont(changeNumberFormat(=ul))}{/if}</em><span class="sptxt sp_txt8">)</span></td><td><span class="sptxt sp_txt9">거래량</span><em>{js numberFont(changeNumberFormat(=aq))}</em></td></tr><tr><td class="first"><span class="sptxt sp_txt3">시가</span>{if tyn == "Y"}<em>{else}{if ov == 0}<em>{elseif pcv < ov}<em class="no_up">{elseif pcv > ov}<em class="no_down">{else}<em>{/if}{/if}{if ms == "PREOPEN"}{js numberFont(0)}{else}{js numberFont(changeNumberFormat(=ov))}{/if}</em></td><td><span class="sptxt sp_txt5">저가</span>{if tyn == "Y"}<em>{else}{if lv == 0}<em>{elseif pcv < lv}<em class="no_up">{elseif pcv > lv}<em class="no_down">{else}<em>{/if}{/if}{if ms == "PREOPEN"}{js numberFont(0)}{else}{js numberFont(changeNumberFormat(=lv))}{/if}</em><span class="sptxt sp_txt7">(하한가</span><em class="no_cha">{if ms == "PREOPEN"}{js numberFont(0)}{else}{js numberFont(changeNumberFormat(=ll))}{/if}</em><span class="sptxt sp_txt8">)</span></td><td><span class="sptxt sp_txt10">거래대금</span><em>{js numberFont(changeNumberFormat((=aa/1000000).toFixed(0)))}</em><span class="sptxt sp_txt11">백만</span></td></tr></table>
+var pollingInterval = 2000;var timer = null;var pollingAjax = null;var itemcodes = '';var startTimer = function() {clearTimer();timer = setInterval('doPolling()', pollingInterval);}var clearTimer = function() {if (pollingAjax) {pollingAjax.abort();pollingAjax = null;}timer = window.clearInterval(timer);}var doPolling = function() {var pollingApiUrl = "http://polling.finance.naver.com/api/realtime.nhn?query=SERVICE_ITEM:" + "063760"if (requestType == 'recent' && itemcodes != "") {pollingApiUrl += "|" + "SERVICE_RECENT_ITEM:" + itemcodes;} else if (requestType == 'mystock' && itemcodes != ""){pollingApiUrl += "|" + "SERVICE_MYSTOCK_ITEM:" + itemcodes;}pollingAjax = jindo.$Ajax(pollingApiUrl, {type : 'jsonp',jsonp_charset : "euc-kr",onload : function(response) {if(response != null && response.readyState() == 4) {refreshQuote(response.json());startTimer();}},timeout : 2,ontimeout : function() {startTimer();},async : true});pollingAjax.request();}function displayTime(ms, time) {var result;var utcDate = new Date(time);utcDate.setMinutes(utcDate.getMinutes() + utcDate.getTimezoneOffset());utcDate.setHours(utcDate.getHours() + 9);var oDate = jindo.$Date(utcDate);if (ms == "PREOPEN") {closeDate = oDate.format('Y.m.d')result = '<em class="date">' + oDate.format('Y.m.d') + ' <span>기준(개장전)</span></em> ';} else if (ms == "CLOSE") {result = '<em class="date">' + closeDate + ' <span>기준(장마감)</span></em> ';} else {closeDate = oDate.format('Y.m.d')result = '<em class="date">' + oDate.format('Y.m.d H:i') + ' <span>기준(장중)</span></em> ';}return result;}/** * 우측상단 투자정보 영역 중, NAV 값 갱신 */function refreshEtfNav(etfNav) {var elEtfNav = jindo.$Element(jindo.$$.getSingle("#on_board_last_nav"));if (elEtfNav != null) {if (etfNav != null) {elEtfNav.html("<em><strong>" + changeNumberFormat(etfNav.toFixed(0)) + "</strong></em>");} else {elEtfNav.html("<em><strong>N/A</strong></em>");}}}function refreshInvestmentSummary(nv) {if (!(false && false && false)) {return;}var averageBuyingPrice = 0;var holdingShares = 0;var elEvaluationProfitAmount = jindo.$Element(jindo.$$.getSingle("#evaluation_profit_amount"));// 평가손익 = (nv - 평균매입가) * 보유수량 var evaluationProfitAmount = (nv - 0) * 0;// 평가수익률 = 평가손익 / (평균매입가 * 보유수량) * 100var evaluationProfitRate = evaluationProfitAmount / (0 * 0) * 100;var sPointClass = "";var sSign = "";if (evaluationProfitAmount > 0) {sPointClass = "f_up";sSign = "+";} else {sPointClass = "f_down";sSign = "";}var evaluationProfitAmoutText = ""if (evaluationProfitAmount > 10000000000) {var evaluationProfitAmountDivideBillion = evaluationProfitAmount / 100000000;evaluationProfitAmountText = "<em>" + sSign + changeNumberFormat(evaluationProfitAmountDivideBillion.toFixed(0)) + "억</em>";} else {evaluationProfitAmountText = "<em>" + sSign + changeNumberFormat(evaluationProfitAmount) + "</em>";}if (elEvaluationProfitAmount != null) {elEvaluationProfitAmount.removeClass("f_up");elEvaluationProfitAmount.removeClass("f_down");elEvaluationProfitAmount.addClass(sPointClass);elEvaluationProfitAmount.html(evaluationProfitAmountText);}var elEvaluationProfitRate = jindo.$Element(jindo.$$.getSingle("#evaluation_profit_rate"));if (elEvaluationProfitRate != null) {elEvaluationProfitRate.removeClass("f_up");elEvaluationProfitRate.removeClass("f_down");elEvaluationProfitRate.addClass(sPointClass);elEvaluationProfitRate.html("<em>" + sSign + changeNumberFormat(evaluationProfitRate.toFixed(2)) + "%</em>");}}function refreshCompanyValue(json) {var sPer = "N/A";var sKrxPer = "N/A";/* if ((json.per !== undefined) && (json.per !== null)) {sPer = converToFixedPointNotation(json.per, 2);}jindo.$A(jindo.$$("#_per")).forEach(function(v) {jindo.$Element(v).text(sPer);}, this); */if ((json.eps !== undefined) && (json.eps !== null)) {sPer = converToFixedPointNotation(json.nv / json.eps, 2);}jindo.$A(jindo.$$("#_per")).forEach(function(v) {jindo.$Element(v).text(sPer);}, this);if ((json.keps !== undefined) && (json.keps !== null)) {sKrxPer = converToFixedPointNotation(json.nv / json.keps, 2);}jindo.$A(jindo.$$("#krx_per")).forEach(function(v) {jindo.$Element(v).text(sKrxPer);}, this);var sCnsPer = "N/A";if ((json.cnsEps !== undefined) && (json.cnsEps !== null)) {sCnsPer = converToFixedPointNotation(json.nv / json.cnsEps, 2);}jindo.$A(jindo.$$("#_cns_per")).forEach(function(v) {jindo.$Element(v).text(sCnsPer);}, this);var sPbr = "N/A";if ((json.bps !== undefined) && (json.bps !== null)) {var bps = converToFixedPointNotation(json.bps, 0)sPbr = converToFixedPointNotation(json.nv / bps, 2);}jindo.$A(jindo.$$("#_pbr")).forEach(function(v) {jindo.$Element(v).text(sPbr);}, this);var sDvr = "N/A";if ((json.dv !== undefined) && (json.dv !== null)) {var dv = converToFixedPointNotation(json.dv, 0)sDvr = converToFixedPointNotation((dv * 100)/ json.nv, 2);}jindo.$A(jindo.$$("#_dvr")).forEach(function(v) {jindo.$Element(v).text(sDvr);}, this);}function refreshQuote(res) {if(res != null && res.resultCode == 'success') {pollingInterval = res.result.pollingInterval;for (var index = 0 ; index < res.result.areas.length ; index++) {if (res.result.areas[index].name == "SERVICE_ITEM") {var ms = "NOT DEFINED";ms = res.result.areas[index].datas[0].ms;document.getElementById("time").innerHTML = displayTime(ms, res.result.time);jindo.$Element(jindo.$$.getSingle("#chart_area .rate_info")).html(jindo.$Template("summaryTpl").process(res.result.areas[index].datas[0]));refreshInvestmentSummary(res.result.areas[index].datas[0].nv);refreshEtfNav(res.result.areas[index].datas[0].nav);refreshCompanyValue(res.result.areas[index].datas[0]);} else if (res.result.areas[index].name == "SERVICE_RECENT_ITEM") {renderRecentAreaRealtime("recent", res.result.areas[index]);} else if (res.result.areas[index].name == "SERVICE_MYSTOCK_ITEM") {renderRecentAreaRealtime("mystock", res.result.areas[index]);}}}}function numberFont(value) {value = value + "";var result = "";for (i = 0; i < value.length; i++) {var tmpChar = value.charAt(i);result += '<span class="';if (tmpChar == ".") {result += "jum";} else if (tmpChar == ",") {result += "shim";} else {result += "no" + tmpChar;}result += '">' + tmpChar + '</span>';}return result;}function changeNumberFormat(vNumber){var sUnderNumber = "";var sNumberString = vNumber || 0;sNumberString = (typeof sNumberString != "String") ? String(sNumberString) : sNumberString;if(sNumberString.indexOf(".") > -1){var aNumber = sNumberString.split(".");sNumberString = aNumber[0];sUnderNumber = "." + aNumber[1];}return sNumberString.replace(/(\d)(?=(\d{3})+$)/igm, "$1,") + sUnderNumber;}function converToFixedPointNotation (nNumber, nDecimalLength){return parseFloat(nNumber).toFixed(nDecimalLength || 0);}// 1분마다 정보 업데이트var updateInformationInterval = 60000;var informationTimer = null;var oUpdateAjax = null;var startInformationTimer = function() {clearInformationTimer();informationTimer = setInterval('doUpdateInformation()', updateInformationInterval);}var clearInformationTimer = function() {if (oUpdateAjax) {oUpdateAjax.abort();oUpdateAjax = null;}informationTimer = window.clearInterval(informationTimer);}var doUpdateInformation = function() {var sApiUrl = "http://api.finance.naver.com/service/itemSummary.nhn?itemcode=063760"oUpdateAjax = jindo.$Ajax(sApiUrl, {type : 'jsonp',jsonp_charset : "utf-8",onload : function(response) {if(response != null && response.readyState() == 4) {var json = response.json();if (json.now == undefined) {startInformationTimer();return;}var sMarketSum = (json.marketSum + "");sMarketSum = sMarketSum.substring(0, sMarketSum.length - 2);sMarketSum = changeNumberFormat(sMarketSum);var sPer = changeNumberFormat(json.per);var sEps = changeNumberFormat(json.eps);var sNowVal = changeNumberFormat(json.now);var sDiff = changeNumberFormat(json.diff);var sRate = changeNumberFormat(json.rate) + "%";var sQuant = changeNumberFormat(json.quant);var sAmount = changeNumberFormat(json.amount);var sHigh = changeNumberFormat(json.high);var sLow = changeNumberFormat(json.low);if (sRate == "0%") {sRate = "0.00%";}if (json.per == undefined) {sPer = "N/A";}if (json.eps == undefined) {sEps = "N/A";}jindo.$A(jindo.$$("#_sise_market_sum")).forEach(function(v) {jindo.$Element(v).text(sMarketSum);}, this);jindo.$A(jindo.$$("#_sise_per")).forEach(function(v) {jindo.$Element(v).text(sPer);}, this);jindo.$A(jindo.$$("#_sise_eps")).forEach(function(v) {jindo.$Element(v).text(sEps);}, this);jindo.$A(jindo.$$("#_nowVal")).forEach(function(v) {jindo.$Element(v).text(sNowVal);}, this);jindo.$A(jindo.$$("#_diff")).forEach(function(v) {var sFormat = null;var sDiffToDisplay = sDiff.replace("-", "");if (json.risefall == 1) {sFormat = "<em class=\"bu_p bu_pup2\" style=\"margin:0 4px 0 0\"><span class=\"blind\">상한</span></em><span class=\"tah p11 red01\">%s</span>";} else if (json.risefall == 2) {sFormat = "<em class=\"bu_p bu_pup\" style=\"margin:0 4px 0 0\"><span class=\"blind\">상승</span></em><span class=\"tah p11 red01\">%s</span>";} else if (json.risefall == 3) {sFormat = "<span class=\"tah p11\">%s</span>";} else if (json.risefall == 4) {sFormat = "<em class=\"bu_p bu_pdn2\" style=\"margin:0 4px 0 0\"><span class=\"blind\">하한</span></em><span class=\"tah p11 nv01\">%s</span>";} else {sFormat = "<em class=\"bu_p bu_pdn\" style=\"margin:0 4px 0 0\"><span class=\"blind\">하락</span></em><span class=\"tah p11 nv01\">%s</span>";}var sHtml = jindo.$S(sFormat).format(sDiffToDisplay);jindo.$Element(v).html(sHtml);}, this);jindo.$A(jindo.$$("#_rate")).forEach(function(v) {var sCss = "red01";var sRateToDisplay = sRate;if (sRate.indexOf("-") > -1) {sCss = "nv01";} else if (sRate.indexOf("0.00") > -1) {sCss = "";} else {sRateToDisplay = "+" + sRateToDisplay;}var sHtml = "<span class=\"tah p11 " + sCss + "\">" + sRateToDisplay + "</span>";jindo.$Element(v).html(sHtml);}, this);jindo.$A(jindo.$$("#_quant")).forEach(function(v) {jindo.$Element(v).text(sQuant);}, this);jindo.$A(jindo.$$("#_amount")).forEach(function(v) {jindo.$Element(v).text(sAmount);}, this);jindo.$A(jindo.$$("#_high")).forEach(function(v) {jindo.$Element(v).text(sHigh);}, this);jindo.$A(jindo.$$("#_low")).forEach(function(v) {jindo.$Element(v).text(sLow);}, this);startInformationTimer();}},timeout : 2,ontimeout : function() {startInformationTimer();},async : true});oUpdateAjax.request();}var dateTime = "20170609105448";var closeDate = dateTime.substring(0,4) + "." + dateTime.substring(4,6) + "." + dateTime.substring(6,8);/** * 플래시 지원여부 확인 */function isInstalledFlash() {var aFlash = jindo.$Agent().flash();var bResult = false;if (aFlash != null && aFlash.installed) {bResult = true;}return bResult;}/** * 플래시 지원여부에 따라 차트 노출 */function initChartArea(flashAreaClassName, htmlAreaClassName) {var eFlashChartArea = jindo.$Element(jindo.$$.getSingle("." + flashAreaClassName));var eImgChartArea = jindo.$Element(jindo.$$.getSingle("." + htmlAreaClassName));if (eFlashChartArea != null && eImgChartArea != null) {if (isInstalledFlash()) {eImgChartArea.hide();} else {eFlashChartArea.hide();}}}/** * 선택한 타입(1일, 일주일, 3개월, 1년, 3년)에 따라 이미지 차트 변경 * * @param chartType 차트종류(1일, 일주일, 3개월, 1년, 3년) */function changeImgChart(chartType) {eImgChartTab = jindo.$Element(jindo.$$.getSingle("._" + chartType));if (eImgChartTab != null && !eImgChartTab.hasClass("on")) {jindo.$Element(jindo.$$.getSingle("#img_cahrt_area")).attr("src", "http://imgfinance.naver.net/chart/item/" + chartType + "/063760.png?sidcode=1496973288919");}}jindo.$Element(jindo.$$.getSingle('.pad_tap')).delegate('click', 'li', function(oEvent) {jindo.$Element(jindo.$$.getSingle('li._item_img_chart.on')).removeClass('on');jindo.$Element(oEvent.element).addClass('on');});initChartArea('fs_chart', 'pad_area');
+<!--jindo.$Fn(function() {var itemAddLayer = new MyFinance.MyStock.ItemAddLayer(jindo.$$.getSingle('.ly_lstmove'), {'LayerPosition': {sPosition : "outside-bottom",sAlign : "left",nTop : 4,nLeft : -96}});jindo.$Fn(function(e) {e.stopDefault();itemAddLayer.open(['063760'], e.element);}, this).attach(jindo.$$.getSingle('.snb_top1'), 'click');}, this).attach(document, 'domready');//-->
+ 
+ 
+종합정보
+ 
+시세
+ 
+차트
+ 
+투자자별 매매동향
+ 
+뉴스·공시
+ 
+종목분석
+ 
+종목토론실
+ 
+전자공시
+ 
+종합정보
+투자자별 매매동향
+거래원 정보 : 일별 상위 5위 거래원의 누적 정보 기준 (20분 지연)
+거래원 정보
+거래원 정보
+매도상위
+거래량
+매수상위
+거개량
+외국계추정합
+0
++1,000
+1,000
+하나금융투자
+7,637
+현대
+11,390
+NH투자증권
+6,446
+키움증권
+6,776
+유진증권
+5,887
+메리츠
+4,500
+미래에셋대우
+4,853
+하나금융투자
+4,393
+메리츠
+3,396
+이베스트
+3,568
+외국인 기관
+외국인 기관
+날짜
+종가
+전일비
+외국인
+기관
+06/08
+26,850
+하향
+250
+-2,263
+-4,769
+06/07
+27,100
+상향
+500
+-1,102
+-1,153
+06/05
+26,600
+상향
+500
++34,051
+-13,213
+06/02
+26,100
+상향
+100
++257
++2,727
+06/01
+26,000
+상향
+500
++5,496
+-10,824
+05/31
+25,500
+상향
+1,900
++55,964
+-126,985
+ 
+더보기
+뉴스공시
+이엘피, 미세 형성 구조체 갖는 렌즈 제조법 관련 특허 
+06/07 11:14
+[공시]
+(주)이엘피 기타 경영사항(특허권 취득)(자
+06/07 06:50
+이엘피, 단기차입금 10억원 감소 결정
+06/01 14:48
+이엘피, 단기차입금 10억원 감소 결정
+06/01 11:29
+[공시]
+(주)이엘피 단기차입금감소결정(자율공시)
+06/01 06:50
+[fnRASSI]이엘피(063760) 8.05% 상승
+05/31 13:39
+[마켓인사이트] 반도체·OLED 공모주 '귀하신 몸'
+05/30 20:04
+잘난 ‘IT 새내기’ 덕…IPO시장 주도권 잡은 코스닥
+05/23 09:25
+이엘피, 1분기 영업이익 55억원…전년比 515%↑
+05/15 13:41
+삼성發 호재에 공모주 시장은 지금 지각변동
+05/02 16:55
+더보기
+종목토론실
+덕산네오룩스
+[3]
+06/08 16:09
+매수 찬스
+[2]
+06/08 15:39
+매수기회 없는 주식 혼자갈수 잇나
+[6]
+06/07 21:19
+OLED 저평가된 좋은 회사군요.
+06/07 12:30
+회사 주인이 언제던지 바뀔수 있다
+06/02 13:49
+터널 강하게 뚫어야 함   낼이 아주 중요
+06/01 19:22
+오늘동향 참고하세용~
+05/31 15:35
+슬슬시동거나요
+05/31 11:50
+외국인 블럭딜했나요?
+[4]
+05/30 21:14
+오늘상승
+[8]
+05/30 08:21
+더보기
+기업실적분석
+기업실적분석 테이블
+주요재무정보
+최근 연간 실적
+최근 분기 실적
+2014.12
+2015.12
+2016.12
+2017.12
+(E)
+2016.09
+2016.12
+2017.03
+2017.06
+(E)
+ 
+GAAP연결
+ 
+GAAP연결
+ 
+IFRS연결
+ 
+IFRS연결
+ 
+IFRS연결
+ 
+IFRS연결
+ 
+IFRS연결
+ 
+IFRS연결
+매출액
+102
+161
+309
+460
+80
+121
+120
+95
+영업이익
+12
+30
+114
+175
+38
+44
+55
+36
+당기순이익
+11
+32
+107
+165
+31
+45
+46
+ 
+영업이익률
+12.12
+18.93
+37.04
+38.08
+46.87
+36.21
+45.66
+37.90
+순이익률
+10.48
+19.93
+34.77
+35.86
+38.63
+36.97
+38.53
+ 
+ROE(지배주주)
+9.72
+24.12
+ 
+ 
+15.53
+18.91
+12.67
+ 
+부채비율
+42.01
+35.42
+42.28
+ 
+29.48
+42.28
+21.26
+ 
+당좌비율
+450.52
+554.40
+279.08
+ 
+490.41
+279.08
+700.93
+ 
+유보율
+484.62
+651.21
+1,190.89
+ 
+967.71
+1,190.89
+1,421.32
+ 
+EPS(원)
+270
+806
+2,688
+3,478
+771
+1,117
+1,150
+ 
+BPS(원)
+2,923
+3,756
+6,467
+ 
+5,347
+6,467
+9,721
+ 
+주당배당금(원)
+시가배당률(%)
+배당성향(%)
+-
+분기 실적은 해당 분기까지의 누적 실적에서 직전 분기까지의 누적 실적을 차감하는 방식으로 계산되므로,
+기업에서 공시한 분기 실적과 차이가 있을 수 있습니다.
+컨센서스(
+E
+) : 최근 3개월간 증권사에서 발표한 전망치의 평균값입니다.
+ 손익계산서
+조정영업이익
+매출액-매출원가-판관비
+지배주주지분
+지배회상의 지분에 귀속되는 당기순이익
+비지배주주지분
+종속회사의 지분에 귀속되는 당기순이익
+ 수익성
+조정영업이익률
+조정영업이익/매출액
+ROE(지배주주지분)
+지배주주지분 당기순이익 / (자본총계 - 비지배주주지분)
+ 가치지표
+EPS(지배주주지분)
+지배주주지분 당기순이익/지배주주 평균발행주식수(우선주+보통주)
+BPS(지배주주지분
+지배주주지분 귀속 순자산/지배주주 기말발행주식(우선주+보통주)
+더보기
+동종업종비교
+(업종명 : 
+디스플레이장비및부품
+｜
+재무정보: 2017.03 분기 기준)
+동종업종비교
+종목명
+이엘피
+*
+063760
+SK머티리얼즈
+*
+036490
+서울반도체
+*
+046890
+톱텍
+*
+108230
+AP시스템
+265520
+현재가
+27,650
+198,600
+19,650
+28,650
+53,300
+전일대비
+상향
+800
+상향
+1,100
+상향
+100
+하향
+150
+하향
+1,400
+등락률
+상향
++2.98%
+상향
++0.56%
+상향
++0.51%
+하향
+-0.52%
+하향
+-2.56%
+시가총액(억)
+1,350
+20,947
+11,457
+10,336
+7,290
+외국인비율(%)
+8.57
+12.79
+11.66
+4.94
+20.53
+매출액(억)
+120
+1,164
+2,562
+3,058
+1,264
+영업이익(억)
+55
+331
+234
+444
+126
+조정영업이익(억)
+55
+331
+234
+444
+126
+영업이익증가율(%)
+24.79
+-17.57
+14.00
+101.33
+당기순이익(억)
+46
+218
+58
+258
+92
+주당순이익(원)
+1,149.55
+2,023.58
+116.23
+713.92
+1,805.22
+ROE(%)
+12.67
+5.87
+1.13
+12.93
+PER(%)
+10.29
+19.28
+31.64
+39.35
+PBR(배)
+4.28
+4.97
+1.88
+5.47
+더보기
+                         
+                         
+PER, PBR 수치는 최근 결산년도 기준입니다.
+                         
+*
+ 종목은 IFRS (연결) 회계기준을 적용한 종목입니다. (최근 분기보고서 기준이며, 기준 분기는 업종마다 다를 수 있습니다.)
+                         
+IFRS (연결) 적용 종목의 당기순이익 및 가치지표(주당순이익, PER, PBR)는 지배주주지분을 기준으로 산출하였습니다.
+                         
+         
+         
+투자정보
+호가10단계
+투자정보
+시가총액
+시가총액
+1,351
+억원
+시가총액순위
+코스닥 
+431
+위
+상장주식수
+4,885,500
+액면가
+l
+매매단위
+500
+원
+l
+1
+주
+주총일
+l
+전자투표
+전자투표제란?
+전자투표제란 주주가 온라인을 통해 의결권등을 행사하는 투표방식을 말합니다.
+주주총회 및 전자투표 정보제공 : 한국예탁결제원
+2017.03.08
+l
+미도입
+외국인한도주식수
+외국인한도주식수(A)
+4,885,500
+외국인보유주식수(B)
+418,700
+외국인소진율(B/A)
+                                 
+                                     
+외국인(한도)소진율이란 외국인보유주식수를 외국인한도주식수으로 나눈 값입니다.
+                                     
+일반적인 경우에는 외국인한도주식수와 상장주식수가 같아서 외국인 소진율과 보유율이 동일하지만, 국가 기간산업의 경우 한도주식수가 정해져 있어 두 비율이 달라질 수 있습니다.(Ex. 한국전력)
+                                     
+                                 
+                            
+8.57%
+투자의견
+투자의견
+l
+목표주가
+N/A
+l
+N/A
+52주최고
+l
+최저
+27,350
+l
+9,010
+PER/EPS
+                    
+                    
+ 
+ PER
+l
+EPS(WISEfn)
+ 
+ 
+ 
+ 
+PER(WISEfn) = 현재가÷EPS(WISEfn)
+ EPS(WISEfn)은 지배기업귀속 당기순이익을 수정평균발행주식수로 나눈 값으로 와이즈에프엔((WISEfn)에서 제공합니다. 보통주와 우선주를 합산해서 계산합니다. 
+ 
+ 
+ 
+10.29
+배
+l
+2,688
+원 
+     
+                    
+                    
+                    
+    PER
+l
+EPS(KRX)
+     
+PER(KRX) = 현재가÷EPS(KRX)
+EPS(KRX)은 지배기업귀속 보통주 당기순이익을 가중평균유통보통주로 나눈 값으로 한국거래소(KRX)에서 제공합니다. 우선주는 제외하고 계산합니다.                    
+ 
+ 
+ 
+ 
+9.40
+배
+l
+2,943
+원
+ 
+                    
+                        
+추정PER
+l
+EPS
+ 
+추정PER = 현재가÷추정EPS
+추정EPS는 올해 예상EPS에 대한 증권사 추정 평균값(컨센서스)으로 와이즈에프엔에서 제공합니다. 추정 증권사가 3개 이상인 경우에만 제공합니다.
+N/A
+l
+N/A
+PBR
+l
+BPS(WISEfn)
+PBR(WISEfn) = 현재가÷BPS(WISEfn)
+ BPS(WISEfn)은 지배기업귀속 자본총계를 수정기말유통주식수로 나눈 값으로 와이즈에프엔에서 제공합니다. 보통주와 우선주를 합산해서 계산합니다. 
+4.28
+배
+l
+6,467
+원
+배당수익률
+배당수익률 = (배당금 / 현재가) x 100
+배당금은 최근 결산연도 기준의 중간배당을 포함한 총 배당금입니다.
+N/A
+동일업종 PER
+동일업종 PER
+83.81
+배
+동일업종 등락률
+-0.04%
+호가 10단계
+호가 10단계
+매도잔량
+호가
+(20분지연)
+매수잔량
+81
+28,050
+5,376
+28,000
+4,075
+27,950
+1,713
+27,900
+1,556
+27,850
+1,979
+27,800
+4,916
+27,750
+1,344
+27,700
+1,540
+27,650
+1,335
+27,600
+27,550
+270
+27,500
+1,156
+27,450
+3,366
+27,400
+16
+27,350
+141
+27,300
+260
+27,250
+4
+27,150
+29
+27,100
+334
+27,050
+239
+23,915
+잔량합계
+5,815
+최근검색
+My stock
+최근조회
+<div class="no_result"><img src="http://static.naver.net/nfinance/img/no_result_aside1_v2.gif" width="144" height="13" border="0" alt="최근 조회된 종목이 없습니다." class="noresult_txt1"></div>
+<div class="no_result"><map name="no_result_aside2"><area shape="rect" coords="6,38,107,52" href="javascript:naver_login()" alt="My stock 로그인"></map><img src="http://imgstock.naver.net/item_renewal/no_result_aside2.gif" width="116" height="53" border="0" usemap="#no_result_aside2" title="" alt="로그인하시면 등록하신 종목의 시세가 제공됩니다." class="noresult_txt2"></div>
+<div class="no_result"><map name="no_result_aside3"><area shape="rect" coords="11,38,125,52" href="http://finance.naver.com/mystock/" alt="My stock 바로가기"></map><img src="http://imgstock.naver.net/item_renewal/no_result_aside3.gif" width="137" height="53" border="0" usemap="#no_result_aside3" title="" alt="My Stock에 관심종목을 등록하시면 시세가 제공됩니다." class="noresult_txt3"></div>
+{if type == "recent"}{set listNclicksId="rch.2"}<table summary="최근조회 리스트" class="con_search1"><caption>최근조회</caption><colgroup><col><col width="50"><col width="72"></colgroup>{else}{set listNclicksId="rch.4"}<table summary="MY STOCK 리스트" class="con_search2"><caption>MY STOCK</caption><colgroup><col><col width="60"><col width="60"></colgroup>{/if}<thead><tr><th>업체명</th><th scope="col">거래량</th><th scope="col">전일비</th></tr></thead>{for index:itemList in item_list}{if index == 5 || index == 10}<tr><td colspan="3" class="line"></td></tr>{/if}<tr><th scope="row"><a href="/item/main.nhn?code={=itemList.itemcode}" onClick="clickcr(this, '{=listNclicksId}', '{=itemList.itemcode}', '{=index + 1}', event);" target=_top>{=itemList.itemname}</a></th><td id="nowVal_td_{=index}">{=itemList.now_val}</td><td>{if itemList.risefall == '1'}<em class="f_up up_arrow" id="changeVal_em_{=index}"><span id="changeVal_span_{=index}">상한가</span>{=itemList.change_val}</em>{elseif itemList.risefall == '2'}<em class="f_up up" id="changeVal_em_{=index}"><span id="changeVal_span_{=index}">상향</span>{=itemList.change_val}</em>{elseif itemList.risefall == '4'}<em class="f_down down_arrow" id="changeVal_em_{=index}"><span id="changeVal_span_{=index}">하한가</span>{=itemList.change_val}</em>{elseif itemList.risefall == '5'}<em class="f_down down" id="changeVal_em_{=index}"><span id="changeVal_span_{=index}">하향</span>{=itemList.change_val}</em>{else}<em class="sam" id="changeVal_em_{=index}"><span id="changeVal_span_{=index}">보합</span></em>{/if}{if type == "recent"}<a href="javascript:deleteCodeFromRecent('{=itemList.itemcode}', '{=code}', '{=type}', '{=page}')"><img src="http://imgstock.naver.net/item_renewal/btn_delete.gif" alt="삭제" width="11" height="11"></a>{/if}</td></tr>{/for}</table>
+<span>{if prev_page != 0 || next_page != 0}{if prev_page == 0}<a href="#" onClick="clickcr(this, 'rch.5', '', '', event); return false;"><img src="http://static.naver.com/nfinance/btn_prev2.gif" width="17" height="15" alt="이전"></a>{elseif prev_page > 0}<a href="javascript:movePage('{=code}', '{=type}', '{=prev_page}');" onClick="clickcr(this, 'rch.5', '', '', event)"><img src="http://static.naver.com/nfinance/btn_prev2.gif" width="17" height="15" alt="이전"></a>{/if}{if next_page == 0}<a href="#" onClick="clickcr(this, 'rch.6', '', '', event); return false;"><img src="http://static.naver.com/nfinance/btn_next2.gif" width="17" height="15" alt="다음"></a>{elseif next_page > 0}<a href="javascript:movePage('{=code}', '{=type}', '{=next_page}');" onClick="clickcr(this, 'rch.6', '', '', event)"><img src="http://static.naver.com/nfinance/btn_next2.gif" width="17" height="15" alt="다음"></a>{/if}{/if}</span><a href="{if type == 'recent'}/mystock/recentSearchItemList.nhn{else}/mystock/{/if}" class="more" onClick="clickcr(this, 'rch.7', '', '', event)">더보기</a>
+var comment_code = "063760";var comment_type = "recent";var comment_page = "1";  jindo.$Fn(function() { movePage('063760', 'recent', '1'); }).attach(document,"domready");
+         
+    
+     
+ 
+ 
+인기검색종목
+코스피
+코스닥
+코스피
+코스피 인기검색종목
+업체명
+거래량
+전일비
+삼성전자
+2,308,000
+상향
+50,000
+SK증권
+1,880
+상향
+220
+삼성바이오로..
+226,000
+하향
+9,500
+한미약품
+410,000
+상향
+17,000
+NAVER
+936,000
+상향
+46,000
+LG디스플레이
+36,250
+하향
+250
+LG전자
+87,900
+상향
+1,100
+SK하이닉스
+57,600
+상향
+900
+엔씨소프트
+398,500
+상향
+6,500
+영진약품
+13,150
+보합
+코스피 인기검색종목
+업체명
+거래량
+전일비
+셀트리온
+101,600
+상향
+1,900
+카카오
+108,800
+상향
+300
+엠지메드
+20,700
+상한가
+4,750
+오스코텍
+8,640
+상향
+990
+엔에스엔
+8,750
+상향
+760
+삼진
+10,450
+상향
+1,540
+지엔코
+2,590
+상향
+135
+퍼시픽바이오
+1,975
+상향
+175
+미투온
+10,850
+상향
+450
+에이치엘비생..
+6,920
+상향
+350
+시세정보바로가기
+코스피
+코스닥
+선물
+코넥스
+코스피200
+ETF
+업종별
+테마별
+상한가
+하한가
+상승
+보합
+하락
+거래상위
+급증
+급감
+고가대비급락
+저가대비급등
+시가총액상위
+외국인보유현황
+외국인매매
+기관매매
+프로그램매매
+관리·감리종목
+신규상장종목
+증시자금동향
+투자자별매매동향
+갭상승 종목
+골든크로스 종목
+이격도과열종목
+투자심리과열종목
+상대강도과열종목
+더보기
+공지사항
+더보기
+이용약관
+금융게시판 운영원칙
+개인정보처리방침
+책임의 한계와 법적고지
+금융 고객센터
+네이버(주)에서 제공하는 금융정보는 각 컨텐츠 제공업체
+부터 받는 정보로 투자 참고 사항이며, 오류가 발생할 수 있고 지연될 수
+있습니다. 네이버(주)는 제공된 정보에 의한 투자결과에 대한 법적인 책임을 지지 않습니다. 게시된 정보를 무단으로 배포할 수 없습니다.
+컨텐츠 제공업체
+코스콤 : 
+실시간 주가정보 및 국내시세정보
+와이즈에프엔 : 
+기업 및 재무정보
+이데일리 : 
+해외 시세 및 시장지표 정보
+제로인 : 
+펀드정보
+한국예탁결제원 : 
+주주총회일 및 전자투표 정보
+Copyright ©
+NAVER Corp.
+All Rights Reserved.
+function isVisible(obj) {    if (obj == document) return true     if (!obj) return false    if (!obj.parentNode) return false    if (obj.style) {        if (obj.style.display == 'none') return false        if (obj.style.visibility == 'hidden') return false    }     if (window.getComputedStyle) {        var style = window.getComputedStyle(obj, "")        if (style.display == 'none') return false        if (style.visibility == 'hidden') return false    }     var style = obj.currentStyle    if (style) {        if (style['display'] == 'none') return false        if (style['visibility'] == 'hidden') return false    }     return isVisible(obj.parentNode)}function isChildOf(myobj, containerObj) {while(myobj != undefined) {if (myobj == document.body) {break;} if (myobj == containerObj) {return true;}myobj = myobj.parentElement;}return false;}function gnbLayerClose(e){var target = e.target ? e.target : e.srcElement;if (isVisible(document.getElementById('gnb_service_lyr')) || isVisible(document.getElementById('gnb_notice_lyr')) ||isVisible(document.getElementById('gnb_my_lyr')) ) {if (!isChildOf(target, document.getElementById('gnb'))) {gnbAllLayerClose();}}}var isIE = (navigator.userAgent.toLowerCase().indexOf("msie")!=-1 && window.document.all) ? true:false;if (isIE) {document.attachEvent('onmousedown', gnbLayerClose);} else {window.addEventListener('mousedown', gnbLayerClose);}function showPannel(layerId){var layer = jindo.$(layerId);layer.style.display='block';if (layerId == "summary_lyr") {var layerHeight = jindo.$Element(layer).height();jindo.$Element("summary_ifr").height(layerHeight);}}function hidePannel(layerId){var layer = jindo.$(layerId);layer.style.display='none';}
+jindo.$Fn(function(){jindo.EllipseText.factory(jindo.$$(".new_bbs DIV.sub_section li span.txt"), {nAssistWidth: 9});}).attach(document,'domready'); 

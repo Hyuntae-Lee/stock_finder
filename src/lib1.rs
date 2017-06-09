@@ -5,9 +5,38 @@ use html5ever::tendril::TendrilSink;
 use encoding::{Encoding, DecoderTrap};
 use encoding::all::WINDOWS_949;
 
-use std::cell::{Ref};
-
 use std::io::Read;
+
+pub fn collect_text_in_text_nodes(node_list : Vec<Handle>) -> Vec<String> {
+    let mut text_list : Vec<String> = Vec::new();
+
+    for handle in node_list {
+        let node = handle.borrow();
+        match node.node {
+            NodeEnum::Text(ref x)   => {
+                // get raw data
+                let raw_text = format!("{}", x);
+                let char_list = raw_text.chars();
+
+                // remove invalid chars
+                let mut text = String::new();
+                for c in char_list {
+                    if c != '\r' && c != '\n' && c != '\t' {
+                        text.push(c);
+                    }
+                }
+
+                // get valid data
+                if text.len() > 0 {
+                    text_list.push(text);
+                }
+            },
+            _                       => {}
+        };
+    }
+
+    text_list
+}
 
 pub fn find_text_node(root : &Handle) -> Vec<Handle> {
     let mut buffer : Vec<Handle> = Vec::new();
