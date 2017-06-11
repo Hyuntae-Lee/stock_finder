@@ -8,7 +8,8 @@ pub struct Company<'a> {
     product : &'a str,
 }
 
-pub fn get_code_list(path : &str) -> Result<Vec<&str>, &str> {
+// public methods
+pub fn get_code_list(path : &str) -> Result<Vec<Company>, &str> {
     let mut company_list : Vec<Company> = Vec::new();
 
     // read csv contents
@@ -22,17 +23,22 @@ pub fn get_code_list(path : &str) -> Result<Vec<&str>, &str> {
 
     // parse
     let item_list : Vec<&str> = csv_contents.split("\r\n").collect();
-
-    // debug
     for item in item_list {
-        println!("{:?}", item);
+        let value_list : Vec<&str> = item.split(',').collect();
+        company_list.push(
+            Company {
+                name : value_list[0],
+                code : value_list[1],
+                category : value_list[2],
+                product : value_list[3]
+            }
+        );
     }
 
-
-
-    Err("")
+    Ok(company_list)
 }
 
+// static methods
 fn read_list_file(csv_path : &str) -> Result<String, &str> {
     let mut file = match File::open(csv_path) {
         Err(x)  => {
