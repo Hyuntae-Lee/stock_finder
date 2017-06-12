@@ -37,6 +37,44 @@ impl Company {
 // public methods
 pub fn get_company_list(path : &str, company_list : &mut Vec<Company>,
     progress_cb : fn( done : usize, total : usize )) -> usize {
+
+    let mut name_code_list : Vec<(String, String)> = Vec::new();
+    if get_name_code_list(path, &mut name_code_list) == 0 {
+        println!("Read list fail!");
+        return 0;
+    }
+
+    let total_cnt = name_code_list.len();
+    let mut cnt = 0;
+    for (name, code) in name_code_list {
+        let (roe_list, per_list, pbr_list) =
+            match get_value_with_code(&code) {
+                Err(x)  => {
+                    println!("{}", x);
+                    continue;
+                },
+                Ok(x)   => x
+        };
+
+        company_list.push(
+            Company {
+                name : name,
+                code : code,
+                roe : roe_list,
+                per : per_list,
+                pbr : pbr_list,
+            }
+        );
+
+        progress_cb(cnt, total_cnt);
+
+        cnt = cnt + 1;
+    }
+
+    company_list.len()
+}
+
+fn get_name_code_list(path : &str, list : &mut Vec<(String, String)>) -> usize {
     // read csv contents
     let mut file = match File::open(path) {
         Err(x)  => {
@@ -61,41 +99,12 @@ pub fn get_company_list(path : &str, company_list : &mut Vec<Company>,
 
     // parse
     let line_list : Vec<&str> = buff.split("\r\n").collect();
-
-    let mut i = 0;
-    let size = line_list.len();
-
     for line in line_list {
         let item_list : Vec<&str> = line.split(',').collect();
-        // name
-        let name_str = item_list[0];
-        // code
-        let code_str = item_list[1];
-        // values
-        let (roe_list, per_list, pbr_list) =
-            match get_value_with_code(code_str) {
-                Err(x)  => {
-                    println!("{}", x);
-                    continue;
-                },
-                Ok(x)   => x
-        };
-
-        company_list.push(
-            Company {
-                name : name_str.to_string(),
-                code : code_str.to_string(),
-                roe : roe_list,
-                per : per_list,
-                pbr : pbr_list,
-            }
-        );
-
-        progress_cb(i, size);
-        i = i + 1;
+        list.push((item_list[0].to_string(), item_list[1].to_string()));
     }
 
-    company_list.len()
+    list.len()
 }
 
 fn get_value_with_code<'a>(code : &'a str) ->

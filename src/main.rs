@@ -25,21 +25,22 @@ fn main() {
             continue;
         }
         // 3. roe 가 1.5 보다 작으면 아웃.
-        if item.roe()[0] < 1.5 {
+        if item.roe()[0] < 11.0 {
             continue;
         }
 
         valid_list.push(item);
     }
 
+    // out put
     println!("name,code,roe,per,pbr\r\n");
     for item in valid_list {
-        println!("{},{},{},{},{}\r\n",
+        println!("{},{},{},{},{}",
             item.name(), item.code(),
             item.roe()[0], item.per()[0], item.pbr()[0]);
     }
 }
 
 fn get_list_progress_callback(done : usize, total : usize) {
-    //println!("getting company[{}/{}]", done, total);
+    println!("getting company[{}/{}]", done, total);
 }
