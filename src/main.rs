@@ -32,8 +32,9 @@ fn main() {
         valid_list.push(item);
     }
 
+    println!("name,code,roe,per,pbr\r\n");
     for item in valid_list {
-        println!("{}({}) : roe[{}], per[{}], pbr[{}]",
+        println!("{},{},{},{},{}\r\n",
             item.name(), item.code(),
             item.roe()[0], item.per()[0], item.pbr()[0]);
     }
