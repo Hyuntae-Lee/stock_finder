@@ -15,17 +15,19 @@ fn main() {
     }
 
     // get values
-    let (roe_list, per_list, pbr_list) =
-        match value_getter::get_value_with_code("063760") {
-            Err(x)  => {
-                println!("{}", x);
-                return;
-            },
-            Ok(x)   => x
-    };
+    for company in company_list {
+        let (roe_list, per_list, pbr_list) =
+            match value_getter::get_value_with_code(company.code()) {
+                Err(x)  => {
+                    println!("{}", x);
+                    return;
+                },
+                Ok(x)   => x
+        };
 
-    // print output - debug
-    println!("ROE : {:?}", roe_list);
-    println!("PER : {:?}", per_list);
-    println!("PBR : {:?}", pbr_list);
+        // print output - debug
+        println!("ROE : {:?}", roe_list);
+        println!("PER : {:?}", per_list);
+        println!("PBR : {:?}", pbr_list);
+    }
 }
