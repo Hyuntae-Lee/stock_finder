@@ -8,6 +8,7 @@ use encoding::{Encoding, DecoderTrap};
 use encoding::all::WINDOWS_949;
 
 use std::io::Read;
+use std::fs::File;
 
 enum ValueItem {
     NONE,
@@ -16,7 +17,88 @@ enum ValueItem {
     PBR,
 }
 
-pub fn get_value_with_code<'a>(code : &'a str) ->
+pub struct Company {
+    name : String,
+    code : String,
+    roe : Vec<f32>,
+    per : Vec<f32>,
+    pbr : Vec<f32>,
+}
+
+// impl of Val
+impl Company {
+    pub fn name(&self) -> &str { &self.name }
+    pub fn code(&self) -> &str { &self.code }
+    pub fn roe(&self) -> &Vec<f32> { &self.roe }
+    pub fn per(&self) -> &Vec<f32> { &self.per }
+    pub fn pbr(&self) -> &Vec<f32> { &self.pbr }
+}
+
+// public methods
+pub fn get_company_list(path : &str, company_list : &mut Vec<Company>,
+    progress_cb : fn( done : usize, total : usize )) -> usize {
+    // read csv contents
+    let mut file = match File::open(path) {
+        Err(x)  => {
+            println!("{}", x);
+            return 0;
+        },
+        Ok(x)   => x
+    };
+
+    let mut buff = String::new();
+    let contents_len = match file.read_to_string(&mut buff) {
+        Err(x)  => {
+            println!("{}", x);
+            return 0;
+        },
+        Ok(x)   => x
+    };
+    if contents_len == 0 {
+        println!("Empty file!");
+        return 0;
+    }
+
+    // parse
+    let line_list : Vec<&str> = buff.split("\r\n").collect();
+
+    let mut i = 0;
+    let size = line_list.len();
+
+    for line in line_list {
+        let item_list : Vec<&str> = line.split(',').collect();
+        // name
+        let name_str = item_list[0];
+        // code
+        let code_str = item_list[1];
+        // values
+        let (roe_list, per_list, pbr_list) =
+            match get_value_with_code(code_str) {
+                Err(x)  => {
+                    println!("{}", x);
+                    continue;
+                },
+                Ok(x)   => x
+        };
+
+        company_list.push(
+            Company {
+                name : name_str.to_string(),
+                code : code_str.to_string(),
+                roe : roe_list,
+                per : per_list,
+                pbr : pbr_list,
+            }
+        );
+
+        progress_cb(i, size);
+        i = i + 1;
+    }
+
+    company_list.len()
+}
+
+fn get_value_with_code<'a>(code : &'a str) ->
     Result<(Vec<f32>, Vec<f32>, Vec<f32>), &'a str> {
     // get html string with code
     let html_str = match get_page_html(code) {
