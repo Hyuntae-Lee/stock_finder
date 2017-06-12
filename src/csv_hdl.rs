@@ -9,21 +9,28 @@ pub struct Company<'a> {
 }
 
 // public methods
-pub fn get_code_list(path : &str) -> Result<Vec<Company>, &str> {
-    let mut company_list : Vec<Company> = Vec::new();
-
+pub fn get_company_list(path : &str, company_list : &mut Vec<Company>) -> usize {
     // read csv contents
-    let csv_contents = match read_list_file(path) {
+    let mut file = match File::open(path) {
         Err(x)  => {
             println!("{}", x);
-            return Err("Geting csv contents error!");
+            return 0;
+        },
+        Ok(x)   => x
+    };
+
+    let mut buff = String::new();
+    let contents_len = match file.read_to_string(&mut buff) {
+        Err(x)  => {
+            println!("{}", x);
+            return 0;
         },
         Ok(x)   => x
     };
 
     // parse
-    let item_list : Vec<&str> = csv_contents.split("\r\n").collect();
-    for item in item_list {
+    let line_list : Vec<&str> = buff.split("\r\n").collect();
+    for item in line_list.clone() {
         let value_list : Vec<&str> = item.split(',').collect();
         company_list.push(
             Company {
@@ -35,31 +42,5 @@ pub fn get_code_list(path : &str) -> Result<Vec<Company>, &str> {
         );
     }
 
-    Ok(company_list)
-}
-
-// static methods
-fn read_list_file(csv_path : &str) -> Result<String, &str> {
-    let mut file = match File::open(csv_path) {
-        Err(x)  => {
-            println!("{}", x);
-            return Err("File open error!");
-        },
-        Ok(x)   => x
-    };
-
-    let mut csv_contents = String::new();
-    let contents_len = match file.read_to_string(&mut csv_contents) {
-        Err(x)  => {
-            println!("{}", x);
-            return Err("File read error!");
-        },
-        Ok(x)   => x
-    };
-
-    if contents_len == 0 {
-        return Err("File is empty!");
-    }
-
-    Ok(csv_contents)
+    line_list.len()
 }
