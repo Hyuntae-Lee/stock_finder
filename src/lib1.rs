@@ -20,23 +20,23 @@ enum ValueItem {
 pub struct Company {
     name : String,
     code : String,
-    roe : Vec<f32>,
-    per : Vec<f32>,
-    pbr : Vec<f32>,
+    roe : f32,
+    per : f32,
+    pbr : f32,
 }
 
 // impl of Val
 impl Company {
     pub fn name(&self) -> &str { &self.name }
     pub fn code(&self) -> &str { &self.code }
-    pub fn roe(&self) -> &Vec<f32> { &self.roe }
-    pub fn per(&self) -> &Vec<f32> { &self.per }
-    pub fn pbr(&self) -> &Vec<f32> { &self.pbr }
+    pub fn roe(&self) -> f32 { self.roe }
+    pub fn per(&self) -> f32 { self.per }
+    pub fn pbr(&self) -> f32 { self.pbr }
 }
 
 // public methods
 pub fn get_company_list(path : &str, company_list : &mut Vec<Company>,
-    progress_cb : fn( done : usize, total : usize )) -> usize {
+    progress_cb : fn(done : usize, total : usize)) -> usize {
 
     let mut name_code_list : Vec<(String, String)> = Vec::new();
     if get_name_code_list(path, &mut name_code_list) == 0 {
@@ -44,30 +44,25 @@ pub fn get_company_list(path : &str, company_list : &mut Vec<Company>,
         return 0;
     }
 
-    let mut roe_list : Vec<f32> = Vec::new();
-    let mut pbr_list : Vec<f32> = Vec::new();
-    let mut per_list : Vec<f32> = Vec::new();
-
     let total_cnt = name_code_list.len();
     let mut cnt = 0;
     for (name, code) in name_code_list {
-        if get_value_with_code(&code, &mut roe_list, &mut per_list, &mut pbr_list) == false {
-            println!("Failed to get values for code {}", code);
-            continue;
-        }
-
-        company_list.push(
-            Company {
-                name : name,
-                code : code,
-                roe : roe_list.clone(),
-                per : per_list.clone(),
-                pbr : pbr_list.clone(),
+        match get_value_with_code(&code) {
+            Err(_)  => {},
+            Ok((roe, per, pbr))   => {
+                company_list.push(
+                    Company {
+                        name : name,
+                        code : code,
+                        roe : roe,
+                        per : per,
+                        pbr : pbr,
+                    }
+                );
             }
-        );
+        };
 
         progress_cb(cnt, total_cnt);
-
         cnt = cnt + 1;
     }
 
@@ -107,58 +102,62 @@ fn get_name_code_list(path : &str, list : &mut Vec<(String, String)>) -> usize {
     list.len()
 }
 
-fn get_value_with_code<'a>(code : &'a str, roe_list : &mut Vec<f32>, per_list : &mut Vec<f32>,
-    pbr_list : &mut Vec<f32>) -> bool {
+fn get_value_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), &str> {
+    let mut html_str = String::new();
+
     // get html string with code
-    let html_str = match get_page_html(code) {
-        Err(x)  => {
-            println!("{}", x);
-            return false;
-        },
-        Ok(x)   => String::from(x)
-    };
+    if get_page_html(code, &mut html_str) == false {
+        return Err("Getting html page is failed!");
+    }
 
     // parse html
-    let dom = match parse_html(html_str) {
-        Err(x)  => {
-            println!("{}", x);
-            return false;
+    let decoder = parse_document(RcDom::default(), Default::default()).from_utf8();
+    let mut html_bytes = html_str.as_bytes();
+    let dom = match decoder.read_from(&mut html_bytes) {
+        Err(_)  => {
+            return Err("Parsing html is failed!");
         },
         Ok(x)   => x
     };
 
+
     // get values
-    if get_value_from_dom(dom, roe_list, per_list, pbr_list) == false {
-        return false;
+    let values = match get_value_from_dom(dom) {
+        Err(_)  => {
+            return Err("get_value_from_dom() - fail!");
+        },
+        Ok(x)   => x
     };
 
-    true
+    Ok(values)
 }
 
-fn get_value_from_dom<'a>(dom : RcDom, roe_list : &mut Vec<f32>, per_list : &mut Vec<f32>,
-    pbr_list : &mut Vec<f32>) -> bool {
+fn get_value_from_dom<'a>(dom : RcDom) -> Result<(f32, f32, f32), &'a str> {
 
     // find text nodes
     let text_node_list = find_text_node(&dom.document);
     if text_node_list.len() == 0 {
-        println!("Failed to collect nodes.");
-        return false;
+        return Err("Failed to collect nodes.");
     }
 
     // compose text list
     let mut text_list : Vec<String> = Vec::new();
     if collect_text_in_text_nodes(text_node_list, &mut text_list) == 0 {
-        println!("Failed to collect texts.");
-        return false;
+        return Err("Failed to collect texts.");
     }
 
-    //
-    get_values_from_text_list(text_list, roe_list, per_list, pbr_list);
+    // result
+    let values = match get_values_from_text_list(text_list) {
+        Err(_)  => {
+            return Err("Failed to get values from text list!");
+        },
+        Ok(x)   => x
+    };
 
-    true
+    Ok(values)
 }
 
-fn get_page_html<'a>(code : &str) -> Result<String, &'a str> {
+fn get_page_html<'a>(code : &str, html_str : &mut String) -> bool {
     let base_url = "http://finance.naver.com/item/main.nhn?code=";
     let client = Client::new();
     let mut buff = Vec::new();
@@ -170,7 +169,7 @@ fn get_page_html<'a>(code : &str) -> Result<String, &'a str> {
     let mut resp = match client.get(&target_url).send() {
         Err(x)  => {
             println!("{:?}", x);
-            return Err("Failed to get the response from the server!");
+            return false;
         },
         Ok(x)   => x
     };
@@ -179,40 +178,30 @@ fn get_page_html<'a>(code : &str) -> Result<String, &'a str> {
     match resp.read_to_end(&mut buff) {
         Err(x)  => {
             println!("{:?}", x);
-            return Err("Failed to read html binary!");
+            return false;
         },
         Ok(_)   => {}
     };
 
     // encoding 을 utf-8 로 변경
-    let html_str = match WINDOWS_949.decode(&buff[..], DecoderTrap::Replace) {
+    let html_src = match WINDOWS_949.decode(&buff[..], DecoderTrap::Replace) {
         Err(x) => {
             println!("{:?}", x);
-            return Err("Failed to decode html binary!");
+            return false;
         },
         Ok(x) => x
     };
 
-    return Ok(html_str);
+    html_str.push_str(&html_src);
+
+    true
 }
 
-fn parse_html<'a>(html_str: String) -> Result<RcDom, &'a str> {
-    let mut html_bytes = html_str.as_bytes();
-    let parser = parse_document(RcDom::default(), Default::default());
-    let decoder = parser.from_utf8();
-    let dom = match decoder.read_from(&mut html_bytes) {
-        Err(x)  => {
-            println!("{}", x);
-            return Err("parse_html() fail 1");
-        },
-        Ok(x)   => x
-    };
+fn get_values_from_text_list<'a>(text_list : Vec<String>) -> Result<(f32, f32, f32), &'a str> {
 
-    return Ok(dom);
-}
-
-fn get_values_from_text_list(text_list : Vec<String>,
-    roe_list : &mut Vec<f32>, per_list : &mut Vec<f32>, pbr_list : &mut Vec<f32>) {
+    let mut roe_list : Vec<f32> = Vec::new();
+    let mut per_list : Vec<f32> = Vec::new();
+    let mut pbr_list : Vec<f32> = Vec::new();
 
     let mut item = ValueItem::NONE;
     for text in text_list {
@@ -253,6 +242,20 @@ fn get_values_from_text_list(text_list : Vec<String>,
             _ => item = text_to_item(&text)
         };
     }
+
+    if roe_list.len() == 0 {
+        return Err("No ROE value!");
+    }
+
+    if per_list.len() == 0 {
+        return Err("No PER value!");
+    }
+
+    if pbr_list.len() == 0 {
+        return Err("No PBR value!");
+    }
+
+    Ok((roe_list[0], per_list[0], pbr_list[0]))
 }
 
 fn text_to_item(text : &str) -> ValueItem {

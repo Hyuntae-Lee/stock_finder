@@ -16,16 +16,16 @@ fn main() {
     // filter companies
     let mut valid_list : Vec<Company> = Vec::new();
     for item in raw_list {
-        // 1. pbr, per, roe 중 하나라도 정보가 없으면, 아웃.
-        if item.roe().len() == 0 || item.per().len() == 0 || item.pbr().len() == 0 {
+        // 1. pbr, per, roe 중 하나라도 정보가 없으면 아웃.
+        if item.roe() <= 0.0 || item.per() <= 0.0 || item.pbr() <= 0.0 {
             continue;
         }
         // 2. pbr 이 1.0 보다 크면 아웃.
-        if item.pbr()[0] > 1.0 {
+        if item.pbr() > 1.0 {
             continue;
         }
         // 3. roe 가 1.5 보다 작으면 아웃.
-        if item.roe()[0] < 11.0 {
+        if item.roe() < 11.0 {
             continue;
         }
 
@@ -35,12 +35,10 @@ fn main() {
     // out put
     println!("name,code,roe,per,pbr\r\n");
     for item in valid_list {
-        println!("{},{},{},{},{}",
-            item.name(), item.code(),
-            item.roe()[0], item.per()[0], item.pbr()[0]);
+        println!("{},{},{},{},{}", item.name(), item.code(), item.roe(), item.per(), item.pbr());
     }
 }
 
 fn get_list_progress_callback(done : usize, total : usize) {
-    println!("getting company[{}/{}]", done, total);
+    println!("[{}/{}]", done, total);
 }
