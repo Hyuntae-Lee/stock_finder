@@ -44,25 +44,25 @@ pub fn get_company_list(path : &str, company_list : &mut Vec<Company>,
         return 0;
     }
 
+    let mut roe_list : Vec<f32> = Vec::new();
+    let mut pbr_list : Vec<f32> = Vec::new();
+    let mut per_list : Vec<f32> = Vec::new();
+
     let total_cnt = name_code_list.len();
     let mut cnt = 0;
     for (name, code) in name_code_list {
-        let (roe_list, per_list, pbr_list) =
-            match get_value_with_code(&code) {
-                Err(x)  => {
-                    println!("{}", x);
-                    continue;
-                },
-                Ok(x)   => x
-        };
+        if get_value_with_code(&code, &mut roe_list, &mut per_list, &mut pbr_list) == false {
+            println!("Failed to get values for code {}", code);
+            continue;
+        }
 
         company_list.push(
             Company {
                 name : name,
                 code : code,
-                roe : roe_list,
-                per : per_list,
-                pbr : pbr_list,
+                roe : roe_list.clone(),
+                per : per_list.clone(),
+                pbr : pbr_list.clone(),
             }
         );
 
@@ -107,12 +107,13 @@ fn get_name_code_list(path : &str, list : &mut Vec<(String, String)>) -> usize {
     list.len()
 }
 
-fn get_value_with_code<'a>(code : &'a str) ->
-    Result<(Vec<f32>, Vec<f32>, Vec<f32>), &'a str> {
+fn get_value_with_code<'a>(code : &'a str, roe_list : &mut Vec<f32>, per_list : &mut Vec<f32>,
+    pbr_list : &mut Vec<f32>) -> bool {
     // get html string with code
     let html_str = match get_page_html(code) {
         Err(x)  => {
-            return Err(x);
+            println!("{}", x);
+            return false;
         },
         Ok(x)   => String::from(x)
     };
@@ -120,38 +121,41 @@ fn get_value_with_code<'a>(code : &'a str) ->
     // parse html
     let dom = match parse_html(html_str) {
         Err(x)  => {
-            return Err(x);
+            println!("{}", x);
+            return false;
         },
         Ok(x)   => x
     };
 
     // get values
-    let (roe_list, per_list, pbr_list) = match get_value_from_dom(dom) {
-        Err(x)  => {
-            return Err(x);
-        },
-        Ok(x)   => x
+    if get_value_from_dom(dom, roe_list, per_list, pbr_list) == false {
+        return false;
     };
 
-    Ok((roe_list, per_list, pbr_list))
+    true
 }
 
-fn get_value_from_dom<'a>(dom : RcDom) ->
-    Result<(Vec<f32>, Vec<f32>, Vec<f32>), &'a str> {
+fn get_value_from_dom<'a>(dom : RcDom, roe_list : &mut Vec<f32>, per_list : &mut Vec<f32>,
+    pbr_list : &mut Vec<f32>) -> bool {
+
     // find text nodes
     let text_node_list = find_text_node(&dom.document);
     if text_node_list.len() == 0 {
-        return Err("Failed to collect nodes.");
+        println!("Failed to collect nodes.");
+        return false;
     }
 
     // compose text list
-    let text_list = collect_text_in_text_nodes(text_node_list);
-    if text_list.len() == 0 {
-        return Err("Failed to collect texts.");
+    let mut text_list : Vec<String> = Vec::new();
+    if collect_text_in_text_nodes(text_node_list, &mut text_list) == 0 {
+        println!("Failed to collect texts.");
+        return false;
     }
 
-    // get values
-    Ok(get_values_from_text_list(text_list))
+    //
+    get_values_from_text_list(text_list, roe_list, per_list, pbr_list);
+
+    true
 }
 
 fn get_page_html<'a>(code : &str) -> Result<String, &'a str> {
@@ -207,13 +211,10 @@ fn parse_html<'a>(html_str: String) -> Result<RcDom, &'a str> {
     return Ok(dom);
 }
 
-fn get_values_from_text_list(text_list : Vec<String>) ->
-    (Vec<f32>, Vec<f32>, Vec<f32>) {
-    let mut roe_list : Vec<f32> = Vec::new();
-    let mut per_list : Vec<f32> = Vec::new();
-    let mut pbr_list : Vec<f32> = Vec::new();
-    let mut item = ValueItem::NONE;
+fn get_values_from_text_list(text_list : Vec<String>,
+    roe_list : &mut Vec<f32>, per_list : &mut Vec<f32>, pbr_list : &mut Vec<f32>) {
 
+    let mut item = ValueItem::NONE;
     for text in text_list {
         match item {
             ValueItem::ROE => {
@@ -252,8 +253,6 @@ fn get_values_from_text_list(text_list : Vec<String>) ->
             _ => item = text_to_item(&text)
         };
     }
-
-    (roe_list, per_list, pbr_list)
 }
 
 fn text_to_item(text : &str) -> ValueItem {
@@ -271,8 +270,7 @@ fn text_to_item(text : &str) -> ValueItem {
     }
 }
 
-fn collect_text_in_text_nodes(node_list : Vec<Handle>) -> Vec<String> {
-    let mut text_list : Vec<String> = Vec::new();
+fn collect_text_in_text_nodes(node_list : Vec<Handle>, text_list : &mut Vec<String>) -> usize {
 
     for handle in node_list {
         let node = handle.borrow();
@@ -301,7 +299,7 @@ fn collect_text_in_text_nodes(node_list : Vec<Handle>) -> Vec<String> {
         };
     }
 
-    text_list
+    text_list.len()
 }
 
 fn find_text_node(root : &Handle) -> Vec<Handle> {
