@@ -8,7 +8,6 @@ use encoding::{Encoding, DecoderTrap};
 use encoding::all::WINDOWS_949;
 
 use std::io::Read;
-use std::fs::File;
 
 enum ValueItem {
     NONE,
@@ -35,14 +34,8 @@ impl Company {
 }
 
 // public methods
-pub fn get_company_list(path : &str, company_list : &mut Vec<Company>,
+pub fn get_company_list(name_code_list : Vec<(String, String)>, company_list : &mut Vec<Company>,
     progress_cb : fn(done : usize, total : usize)) -> usize {
-
-    let mut name_code_list : Vec<(String, String)> = Vec::new();
-    if get_name_code_list(path, &mut name_code_list) == 0 {
-        println!("Read list fail!");
-        return 0;
-    }
 
     let total_cnt = name_code_list.len();
     let mut cnt = 0;
@@ -67,39 +60,6 @@ pub fn get_company_list(path : &str, company_list : &mut Vec<Company>,
     }
 
     company_list.len()
-}
-
-fn get_name_code_list(path : &str, list : &mut Vec<(String, String)>) -> usize {
-    // read csv contents
-    let mut file = match File::open(path) {
-        Err(x)  => {
-            println!("{}", x);
-            return 0;
-        },
-        Ok(x)   => x
-    };
-
-    let mut buff = String::new();
-    let contents_len = match file.read_to_string(&mut buff) {
-        Err(x)  => {
-            println!("{}", x);
-            return 0;
-        },
-        Ok(x)   => x
-    };
-    if contents_len == 0 {
-        println!("Empty file!");
-        return 0;
-    }
-
-    // parse
-    let line_list : Vec<&str> = buff.split("\r\n").collect();
-    for line in line_list {
-        let item_list : Vec<&str> = line.split(',').collect();
-        list.push((item_list[0].to_string(), item_list[1].to_string()));
-    }
-
-    list.len()
 }
 
 fn get_value_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), &str> {

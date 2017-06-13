@@ -3,13 +3,22 @@ extern crate encoding;
 extern crate html5ever;
 
 mod lib1;
+mod lib2;
 
 use lib1::Company;
+use std::io::{self, Write};
 
 fn main() {
-    // get company list
+    // get code list
+    let mut name_code_list : Vec<(String, String)> = Vec::new();
+    if lib2::get_name_code_list("list.csv", &mut name_code_list) == 0 {
+        println!("Read csv fail!");
+        return;
+    }
+
+    // get company info
     let mut raw_list : Vec<Company> = Vec::new();
-    if lib1::get_company_list("list.csv", &mut raw_list, get_list_progress_callback) == 0 {
+    if lib1::get_company_list(name_code_list, &mut raw_list, get_list_progress_callback) == 0 {
         println!("Cannot get the code list!");
     }
 
@@ -24,7 +33,7 @@ fn main() {
         if item.pbr() > 1.0 {
             continue;
         }
-        // 3. roe 가 1.5 보다 작으면 아웃.
+        // 3. roe 가 1.1 보다 작으면 아웃.
         if item.roe() < 11.0 {
             continue;
         }
@@ -32,7 +41,7 @@ fn main() {
         valid_list.push(item);
     }
 
-    // out put
+    // output
     println!("name,code,roe,per,pbr\r\n");
     for item in valid_list {
         println!("{},{},{},{},{}", item.name(), item.code(), item.roe(), item.per(), item.pbr());
@@ -40,5 +49,6 @@ fn main() {
 }
 
 fn get_list_progress_callback(done : usize, total : usize) {
-    println!("[{}/{}]", done, total);
+    print!("\r[{}/{}]", done, total);
+    io::stdout().flush().unwrap();
 }
