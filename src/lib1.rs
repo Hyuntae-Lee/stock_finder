@@ -8,6 +8,7 @@ use encoding::{Encoding, DecoderTrap};
 use encoding::all::WINDOWS_949;
 
 use std::io::Read;
+use std::fmt;
 
 enum ValueItem {
     NONE,
@@ -24,8 +25,29 @@ pub struct Company {
     pbr : f32,
 }
 
-// impl of Val
+// impl of Company
+impl fmt::Debug for Company {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}, {}, {}, {}, {}",
+            self.name(), self.code(), self.roe(), self.per(), self.pbr)
+    }
+}
+
 impl Company {
+    pub fn new(name : &str, code : &str, roe : f32, per : f32, pbr : f32) -> Company {
+        Company {
+            name : name.to_string(),
+            code : code.to_string(),
+            roe : roe,
+            per : per,
+            pbr : pbr
+        }
+    }
+
+    pub fn from(company : Company) -> Company {
+        Company::new(company.name(), company.code(), company.roe(), company.per(), company.pbr())
+    }
+
     pub fn name(&self) -> &str { &self.name }
     pub fn code(&self) -> &str { &self.code }
     pub fn roe(&self) -> f32 { self.roe }
@@ -34,33 +56,7 @@ impl Company {
 }
 
 // public methods
-pub fn get_company_with_code(code : &str) -> Result<Company, &str> {
-    
-}
-
-pub fn get_company_list(name_code_list : Vec<(String, String)>, company_list : &mut Vec<Company>
-    )-> usize {
-    for (name, code) in name_code_list {
-        match get_value_with_code(&code) {
-            Err(_)  => {},
-            Ok((roe, per, pbr))   => {
-                company_list.push(
-                    Company {
-                        name : name,
-                        code : code,
-                        roe : roe,
-                        per : per,
-                        pbr : pbr,
-                    }
-                );
-            }
-        };
-    }
-
-    company_list.len()
-}
-
-fn get_value_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), &str> {
+pub fn get_values_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), &str> {
     let mut html_str = String::new();
 
     // get html string with code

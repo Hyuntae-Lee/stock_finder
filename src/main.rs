@@ -5,12 +5,13 @@ extern crate html5ever;
 mod lib1;
 mod lib2;
 
-use lib1::Company;
 use std::io::{self, Write};
 use std::thread;
 use std::sync::mpsc;
 use std::sync::mpsc::{Sender, Receiver};
 use std::time::Duration;
+
+use lib1::Company;
 
 fn main() {
     // get code list
@@ -21,69 +22,58 @@ fn main() {
     }
 
     // get company info
-
+    // - 연습 삼아 thread 를 사용해 보자
     let (tx, rx) : (Sender<Company>, Receiver<Company>) = mpsc::channel();
-    let tx_1 = tx.clone();
-
     let name_code_list_len = name_code_list.len();
-    let name_code_list_sub = name_code_list.split_off(name_code_list_len / 2);
-
     thread::spawn(move || {
-        let mut company_list : Vec<Company> = Vec::new();
-        if lib1::get_company_list(name_code_list, &mut company_list) == 0 {
-            println!("Cannot get the code list!");
-        }
-
-        for company in company_list {
-            tx.send(company).unwrap();
-            thread::sleep(Duration::new(1, 0));
+        for (name, code) in name_code_list {
+            match lib1::get_values_with_code(&code) {
+                Err(_)  => {},
+                Ok((roe, per, pbr))   => {
+                    let company = Company::new(&name, &code, roe, per, pbr);
+                    tx.send(company).unwrap();
+                    thread::sleep(Duration::new(1, 0));
+                }
+            };
         }
     });
 
-    thread::spawn(move || {
-        let mut company_list : Vec<Company> = Vec::new();
-        if lib1::get_company_list(name_code_list_sub, &mut company_list) == 0 {
-            println!("Cannot get the code list!");
-        }
-
-        for company in company_list {
-            tx_1.send(company).unwrap();
-            thread::sleep(Duration::new(1, 0));
-        }
-    });
-
-    let mut company_list : Vec<Company> = Vec::new();
+    // compose candidate list
+    let mut candidate_list : Vec<Company> = Vec::new();
     let mut cnt = 0;
-    for received in rx {
-        company_list.push(received);
-        cnt = cnt + 1;
-
-        print!("\r[{}/{}]", cnt, name_code_list_len);
+    for item in rx {
+        // update screen
         io::stdout().flush().unwrap();
-    }
 
-    // filter companies
-    let mut valid_list : Vec<Company> = Vec::new();
-    for item in company_list {
-        // 1. pbr, per, roe 중 하나라도 정보가 없으면 아웃.
+        // progress
+        cnt = cnt + 1;
+        // clear screen
+        print!("\r{}", "                                                           ");
+        print!("\r[{}/{}] {}[{}]", cnt, name_code_list_len, item.name(), item.code());
+
+        // filtering
+        // - pbr, per, roe 중 하나라도 정보가 없으면 아웃.
         if item.roe() <= 0.0 || item.per() <= 0.0 || item.pbr() <= 0.0 {
+            print!(" -> not enough infomation");
             continue;
         }
         // 2. pbr 이 1.0 보다 크면 아웃.
         if item.pbr() > 1.0 {
+            print!(" -> too big pbr");
             continue;
         }
         // 3. roe 가 1.1 보다 작으면 아웃.
         if item.roe() < 11.0 {
+            print!(" -> too small roe");
             continue;
         }
 
-        valid_list.push(item);
+        candidate_list.push(Company::from(item));
     }
 
-    // output
-    println!("name,code,roe,per,pbr\r\n");
-    for item in valid_list {
-        println!("{},{},{},{},{}", item.name(), item.code(), item.roe(), item.per(), item.pbr());
+    // print out candidate
+    print!("\r");
+    for item in candidate_list {
+        println!("{:?}", item);
     }
 }
