@@ -34,11 +34,12 @@ impl Company {
 }
 
 // public methods
-pub fn get_company_list(name_code_list : Vec<(String, String)>, company_list : &mut Vec<Company>,
-    progress_cb : fn(done : usize, total : usize)) -> usize {
+pub fn get_company_with_code(code : &str) -> Result<Company, &str> {
+    
+}
 
-    let total_cnt = name_code_list.len();
-    let mut cnt = 0;
+pub fn get_company_list(name_code_list : Vec<(String, String)>, company_list : &mut Vec<Company>
+    )-> usize {
     for (name, code) in name_code_list {
         match get_value_with_code(&code) {
             Err(_)  => {},
@@ -54,9 +55,6 @@ pub fn get_company_list(name_code_list : Vec<(String, String)>, company_list : &
                 );
             }
         };
-
-        progress_cb(cnt, total_cnt);
-        cnt = cnt + 1;
     }
 
     company_list.len()
