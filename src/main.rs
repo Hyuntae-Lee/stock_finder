@@ -24,7 +24,9 @@ fn main() {
     let mut cnt = 0;
     for (name, code) in name_code_list {
         match lib1::get_values_with_code(&code) {
-            Err(_)  => {},
+            Err(_)  => {
+                cnt = cnt + 1;
+            },
             Ok((roe, per, pbr))   => {
                 cnt = cnt + 1;
 
@@ -53,7 +55,7 @@ fn main() {
         }
 
         // print out candidate
-        println!("{}, {}, ROE[{}], PER[{}], PBR[{}]",
+        println!("\r\n{}, {}, ROE[{}], PER[{}], PBR[{}]",
             item.name(), item.code(), item.roe(), item.per(), item.pbr());
     }
 }
