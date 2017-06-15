@@ -38,6 +38,8 @@ fn main() {
         };
     }
 
+    println!("");
+
     // compose candidate list
     for item in company_list {
         // filtering
@@ -55,7 +57,7 @@ fn main() {
         }
 
         // print out candidate
-        println!("\r\n{}, {}, ROE[{}], PER[{}], PBR[{}]",
+        println!("{}, {}, ROE[{}], PER[{}], PBR[{}]",
             item.name(), item.code(), item.roe(), item.per(), item.pbr());
     }
 }
