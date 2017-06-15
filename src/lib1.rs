@@ -44,10 +44,6 @@ impl Company {
         }
     }
 
-    pub fn from(company : Company) -> Company {
-        Company::new(company.name(), company.code(), company.roe(), company.per(), company.pbr())
-    }
-
     pub fn name(&self) -> &str { &self.name }
     pub fn code(&self) -> &str { &self.code }
     pub fn roe(&self) -> f32 { self.roe }
