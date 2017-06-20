@@ -5,11 +5,28 @@ extern crate html5ever;
 mod lib1;
 mod lib2;
 
-use std::io::{self, Write};
+use std::io::{Write, stdout};
+use std::env;
 
 use lib1::Company;
 
 fn main() {
+    if env::args().nth(1).unwrap() == "update" {
+        refresh_list();
+    }
+    else if env::args().nth(1).unwrap() == "roe" {
+        let low_str = env::args().nth(2).unwrap();
+        let high_str = env::args().nth(3).unwrap();
+
+    }
+
+}
+
+fn filter_roe(low : f32, high : f32) -> Vec<&Company> {
+
+}
+
+fn refresh_list() {
     let mut name_code_list : Vec<(String, String)> = Vec::new();
     let mut company_list : Vec<Company> = Vec::new();
 
@@ -33,7 +50,7 @@ fn main() {
                 company_list.push(Company::new(&name, &code, roe, per, pbr));
 
                 print!("\r[{}/{}]", cnt, name_code_list_len);
-                io::stdout().flush().unwrap();
+                stdout().flush().unwrap();
             }
         };
     }
