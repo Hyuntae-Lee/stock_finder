@@ -6,27 +6,9 @@ mod lib1;
 mod lib2;
 
 use std::io::{Write, stdout};
-use std::env;
-
 use lib1::Company;
 
 fn main() {
-    if env::args().nth(1).unwrap() == "update" {
-        refresh_list();
-    }
-    else if env::args().nth(1).unwrap() == "roe" {
-        let low_str = env::args().nth(2).unwrap();
-        let high_str = env::args().nth(3).unwrap();
-
-    }
-
-}
-
-fn filter_roe(low : f32, high : f32) -> Vec<&Company> {
-
-}
-
-fn refresh_list() {
     let mut name_code_list : Vec<(String, String)> = Vec::new();
     let mut company_list : Vec<Company> = Vec::new();
 
@@ -47,7 +29,10 @@ fn refresh_list() {
             Ok((roe, per, pbr))   => {
                 cnt = cnt + 1;
 
-                company_list.push(Company::new(&name, &code, roe, per, pbr));
+                // filter
+                if roe > 1.0 && per > 0.0 && pbr > 0.0 {
+                    company_list.push(Company::new(&name, &code, roe, per, pbr));
+                }
 
                 print!("\r[{}/{}]", cnt, name_code_list_len);
                 stdout().flush().unwrap();
@@ -55,26 +40,6 @@ fn refresh_list() {
         };
     }
 
-    println!("");
-
-    // compose candidate list
-    for item in company_list {
-        // filtering
-        // - pbr, per, roe 중 하나라도 정보가 없으면 아웃.
-        if item.roe() <= 0.0 || item.per() <= 0.0 || item.pbr() <= 0.0 {
-            continue;
-        }
-        // 2. pbr 이 1.0 보다 크면 아웃.
-        if item.pbr() > 1.0 {
-            continue;
-        }
-        // 3. roe 가 1.1 보다 작으면 아웃.
-        if item.roe() < 11.0 {
-            continue;
-        }
-
-        // print out candidate
-        println!("{}, {}, ROE[{}], PER[{}], PBR[{}]",
-            item.name(), item.code(), item.roe(), item.per(), item.pbr());
-    }
+    // write result to file
+    lib2::write_company_list_to_file("output.csv", &company_list);
 }
