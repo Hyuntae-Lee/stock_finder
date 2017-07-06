@@ -30,7 +30,7 @@ fn main() {
                 cnt = cnt + 1;
 
                 // filter
-                if roe > 1.0 && per > 0.0 && pbr > 0.0 {
+                if roe > 11.0 && per > 0.0 && pbr > 0.0 && pbr < 1.0 {
                     company_list.push(Company::new(&name, &code, roe, per, pbr));
                 }
 
