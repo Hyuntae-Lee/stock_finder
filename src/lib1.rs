@@ -54,7 +54,6 @@ impl Company {
 // public methods
 pub fn get_values_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), &str> {
     let mut html_str = String::new();
-
     // get html string with code
     if get_page_html(code, &mut html_str) == false {
         return Err("Getting html page is failed!");
@@ -70,20 +69,11 @@ pub fn get_values_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), &str>
         Ok(x)   => x
     };
 
-
     // get values
-    let values = match get_value_from_dom(dom) {
-        Err(_)  => {
-            return Err("get_value_from_dom() - fail!");
-        },
-        Ok(x)   => x
-    };
-
-    Ok(values)
+    get_value_from_dom(dom)
 }
 
 fn get_value_from_dom<'a>(dom : RcDom) -> Result<(f32, f32, f32), &'a str> {
-
     // find text nodes
     let text_node_list = find_text_node(&dom.document);
     if text_node_list.len() == 0 {
@@ -91,20 +81,16 @@ fn get_value_from_dom<'a>(dom : RcDom) -> Result<(f32, f32, f32), &'a str> {
     }
 
     // compose text list
-    let mut text_list : Vec<String> = Vec::new();
-    if collect_text_in_text_nodes(text_node_list, &mut text_list) == 0 {
+    let text_list;
+    if let Some(x) = collect_text_in_text_nodes(text_node_list) {
+        text_list = x;
+    }
+    else {
         return Err("Failed to collect texts.");
     }
 
     // result
-    let values = match get_values_from_text_list(text_list) {
-        Err(_)  => {
-            return Err("Failed to get values from text list!");
-        },
-        Ok(x)   => x
-    };
-
-    Ok(values)
+    get_values_from_text_list(text_list)
 }
 
 fn get_page_html<'a>(code : &str, html_str : &mut String) -> bool {
@@ -223,16 +209,15 @@ fn text_to_item(text : &str) -> ValueItem {
     }
 }
 
-fn collect_text_in_text_nodes(node_list : Vec<Handle>, text_list : &mut Vec<String>) -> usize {
-    for handle in node_list {
+fn collect_text_in_text_nodes(node_list : Vec<Handle>) -> Option<Vec<String>> {
+    let mut text_list : Vec<String> = Vec::new();
+    let mut node_iter = node_list.iter();
+    while let Some(handle) = node_iter.next() {
         if let NodeEnum::Text(ref x) = handle.borrow().node {
-            // get raw text
-            let raw_text = format!("{}", x);
-
-            // process text
-            let text = raw_text.chars()
-                               .filter(|c| *c != '\r' && *c != '\n' && *c != '\t')
-                               .collect::<String>();
+            // get text
+            let text = format!("{}", x).chars()
+                                       .filter(|c| *c != '\r' && *c != '\n' && *c != '\t')
+                                       .collect::<String>();
             // string data
             if text.len() > 0 {
                 text_list.push(text);
@@ -240,13 +225,20 @@ fn collect_text_in_text_nodes(node_list : Vec<Handle>, text_list : &mut Vec<Stri
         }
     }
 
-    text_list.len()
+    if text_list.len() > 0 {
+        return Some(text_list);
+    }
+    else {
+        return None;
+    }
 }
 
 fn find_text_node(root : &Handle) -> Vec<Handle> {
     let mut buffer : Vec<Handle> = Vec::new();
 
-    for child in &root.borrow().children {
+    let root_bind = root.borrow();
+    let mut child_iter = root_bind.children.iter();
+    while let Some(child) = child_iter.next() {
         if let NodeEnum::Text(_) = child.borrow().node {
             buffer.push(child.clone());
         }
