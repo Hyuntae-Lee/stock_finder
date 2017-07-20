@@ -224,32 +224,20 @@ fn text_to_item(text : &str) -> ValueItem {
 }
 
 fn collect_text_in_text_nodes(node_list : Vec<Handle>, text_list : &mut Vec<String>) -> usize {
-
     for handle in node_list {
-        let node = handle.borrow();
-        match node.node {
-            NodeEnum::Text(ref x)   => {
-                // get raw data
-                let raw_text = format!("{}", x);
-                let char_list = raw_text.chars();
+        if let NodeEnum::Text(ref x) = handle.borrow().node {
+            // get raw text
+            let raw_text = format!("{}", x);
 
-                // remove invalid chars
-                let mut text = String::new();
-                for c in char_list {
-                    if c != '\r' && c != '\n' && c != '\t' {
-                        text.push(c);
-                    }
-                }
-
-                // get valid data
-                if text.len() == 0 {
-                    continue;
-                }
-
+            // process text
+            let text = raw_text.chars()
+                               .filter(|c| *c != '\r' && *c != '\n' && *c != '\t')
+                               .collect::<String>();
+            // string data
+            if text.len() > 0 {
                 text_list.push(text);
-            },
-            _                       => {}
-        };
+            }
+        }
     }
 
     text_list.len()
@@ -258,14 +246,9 @@ fn collect_text_in_text_nodes(node_list : Vec<Handle>, text_list : &mut Vec<Stri
 fn find_text_node(root : &Handle) -> Vec<Handle> {
     let mut buffer : Vec<Handle> = Vec::new();
 
-    let node = root.borrow();
-    for child in &node.children {
-        let child_ref = child.borrow();
-        match child_ref.node {
-            NodeEnum::Text(_)   => {
-                buffer.push(child.clone());
-            },
-            _                       => {}
+    for child in &root.borrow().children {
+        if let NodeEnum::Text(_) = child.borrow().node {
+            buffer.push(child.clone());
         }
 
         let mut buff_for_child = find_text_node(child);
