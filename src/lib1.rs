@@ -51,20 +51,20 @@ impl Company {
     pub fn pbr(&self) -> f32 { self.pbr }
 }
 
-// public methods
-pub fn get_values_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), &str> {
-    let mut html_str = String::new();
-    // get html string with code
-    if get_page_html(code, &mut html_str) == false {
-        return Err("Getting html page is failed!");
-    }
-
+pub fn get_values_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), String> {
+    // get page string
+    let html_str = match get_page_html(code) {
+        Err(x) => {
+            return Err(x);
+        },
+        Ok(x) => x
+    };
     // parse html
     let decoder = parse_document(RcDom::default(), Default::default()).from_utf8();
     let mut html_bytes = html_str.as_bytes();
     let dom = match decoder.read_from(&mut html_bytes) {
-        Err(_)  => {
-            return Err("Parsing html is failed!");
+        Err(x)  => {
+            return Err(format!("{:?}", x));
         },
         Ok(x)   => x
     };
@@ -73,11 +73,11 @@ pub fn get_values_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), &str>
     get_value_from_dom(dom)
 }
 
-fn get_value_from_dom<'a>(dom : RcDom) -> Result<(f32, f32, f32), &'a str> {
+fn get_value_from_dom<'a>(dom : RcDom) -> Result<(f32, f32, f32), String> {
     // find text nodes
     let text_node_list = find_text_node(&dom.document);
     if text_node_list.len() == 0 {
-        return Err("Failed to collect nodes.");
+        return Err("Failed to collect nodes.".to_string());
     }
 
     // compose text list
@@ -86,55 +86,46 @@ fn get_value_from_dom<'a>(dom : RcDom) -> Result<(f32, f32, f32), &'a str> {
         text_list = x;
     }
     else {
-        return Err("Failed to collect texts.");
+        return Err("Failed to collect texts.".to_string());
     }
 
     // result
     get_values_from_text_list(text_list)
 }
 
-fn get_page_html<'a>(code : &str, html_str : &mut String) -> bool {
+fn get_page_html<'a>(code : &str) -> Result<String, String> {
     let base_url = "http://finance.naver.com/item/main.nhn?code=";
-    let client = Client::new();
-    let mut buff = Vec::new();
 
     // url
     let target_url = base_url.to_string() + code;
 
     // send request to server
+    let client = Client::new();
     let mut resp = match client.get(&target_url).send() {
         Err(x)  => {
-            println!("{:?}", x);
-            return false;
+            return Err(format!("{:?}", x));
         },
         Ok(x)   => x
     };
 
     // read html binary
-    match resp.read_to_end(&mut buff) {
-        Err(x)  => {
-            println!("{:?}", x);
-            return false;
-        },
-        Ok(_)   => {}
-    };
+    let mut buff = Vec::new();
+    if let Err(x) = resp.read_to_end(&mut buff) {
+        return Err(format!("{:?}", x));
+    }
 
-    // encoding 을 utf-8 로 변경
-    let html_src = match WINDOWS_949.decode(&buff[..], DecoderTrap::Replace) {
+    // encoding 을 utf-8 로 변경해서 반환
+    let html_str = match WINDOWS_949.decode(&buff[..], DecoderTrap::Replace) {
         Err(x) => {
-            println!("{:?}", x);
-            return false;
+            return Err(format!("{:?}", x));
         },
         Ok(x) => x
     };
 
-    html_str.push_str(&html_src);
-
-    true
+    Ok(html_str)
 }
 
-fn get_values_from_text_list<'a>(text_list : Vec<String>) -> Result<(f32, f32, f32), &'a str> {
-
+fn get_values_from_text_list(text_list : Vec<String>) -> Result<(f32, f32, f32), String> {
     let mut roe_list : Vec<f32> = Vec::new();
     let mut per_list : Vec<f32> = Vec::new();
     let mut pbr_list : Vec<f32> = Vec::new();
@@ -180,15 +171,15 @@ fn get_values_from_text_list<'a>(text_list : Vec<String>) -> Result<(f32, f32, f
     }
 
     if roe_list.len() == 0 {
-        return Err("No ROE value!");
+        return Err("No ROE value!".to_string());
     }
 
     if per_list.len() == 0 {
-        return Err("No PER value!");
+        return Err("No PER value!".to_string());
     }
 
     if pbr_list.len() == 0 {
-        return Err("No PBR value!");
+        return Err("No PBR value!".to_string());
     }
 
     Ok((roe_list[0], per_list[0], pbr_list[0]))
@@ -212,13 +203,13 @@ fn text_to_item(text : &str) -> ValueItem {
 fn collect_text_in_text_nodes(node_list : Vec<Handle>) -> Option<Vec<String>> {
     let mut text_list : Vec<String> = Vec::new();
     let mut node_iter = node_list.iter();
+
     while let Some(handle) = node_iter.next() {
         if let NodeEnum::Text(ref x) = handle.borrow().node {
-            // get text
-            let text = format!("{}", x).chars()
-                                       .filter(|c| *c != '\r' && *c != '\n' && *c != '\t')
-                                       .collect::<String>();
-            // string data
+            let text = format!("{}", x)
+                        .chars()
+                        .filter(|c| *c != '\r' && *c != '\n' && *c != '\t')
+                        .collect::<String>();
             if text.len() > 0 {
                 text_list.push(text);
             }
@@ -226,18 +217,18 @@ fn collect_text_in_text_nodes(node_list : Vec<Handle>) -> Option<Vec<String>> {
     }
 
     if text_list.len() > 0 {
-        return Some(text_list);
+        Some(text_list)
     }
     else {
-        return None;
+        None
     }
 }
 
 fn find_text_node(root : &Handle) -> Vec<Handle> {
     let mut buffer : Vec<Handle> = Vec::new();
-
     let root_bind = root.borrow();
     let mut child_iter = root_bind.children.iter();
+
     while let Some(child) = child_iter.next() {
         if let NodeEnum::Text(_) = child.borrow().node {
             buffer.push(child.clone());
