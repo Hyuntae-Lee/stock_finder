@@ -2,18 +2,21 @@ extern crate hyper;
 extern crate encoding;
 extern crate html5ever;
 
-mod lib1;
-mod lib2;
+mod company;
+mod network_hdlr;
+mod file_hdlr;
 
 use std::io::{Write, stdout};
-use lib1::Company;
+use company::Company;
 
 fn main() {
     let mut name_code_list : Vec<(String, String)> = Vec::new();
     let mut company_list : Vec<Company> = Vec::new();
 
+    println!("Start\r\n");
+
     // get code list
-    if lib2::get_name_code_list("list.csv", &mut name_code_list) == 0 {
+    if file_hdlr::get_name_code_list("list.csv", &mut name_code_list) == 0 {
         println!("Read csv fail!");
         return;
     }
@@ -22,9 +25,10 @@ fn main() {
     let name_code_list_len = name_code_list.len();
     let mut cnt = 0;
     for (name, code) in name_code_list {
-        match lib1::get_values_with_code(&code) {
-            Err(_)  => {
+        match network_hdlr::get_values_with_code(&code) {
+            Err(e)  => {
                 cnt = cnt + 1;
+                println!("Getting vaule failure!! [{}]", e);
             },
             Ok((roe, per, pbr))   => {
                 cnt = cnt + 1;
@@ -41,5 +45,5 @@ fn main() {
     }
 
     // write result to file
-    lib2::write_company_list_to_file("output.csv", &company_list);
+    file_hdlr::write_company_list_to_file("output.csv", &company_list);
 }

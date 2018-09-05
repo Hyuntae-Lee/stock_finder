@@ -8,48 +8,8 @@ use encoding::{Encoding, DecoderTrap};
 use encoding::all::WINDOWS_949;
 
 use std::io::Read;
-use std::fmt;
 
-enum ValueItem {
-    NONE,
-    ROE,
-    PER,
-    PBR,
-}
-
-pub struct Company {
-    name : String,
-    code : String,
-    roe : f32,
-    per : f32,
-    pbr : f32,
-}
-
-// impl of Company
-impl fmt::Debug for Company {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}, {}, {}, {}, {}",
-            self.name(), self.code(), self.roe(), self.per(), self.pbr)
-    }
-}
-
-impl Company {
-    pub fn new(name : &str, code : &str, roe : f32, per : f32, pbr : f32) -> Company {
-        Company {
-            name : name.to_string(),
-            code : code.to_string(),
-            roe : roe,
-            per : per,
-            pbr : pbr
-        }
-    }
-
-    pub fn name(&self) -> &str { &self.name }
-    pub fn code(&self) -> &str { &self.code }
-    pub fn roe(&self) -> f32 { self.roe }
-    pub fn per(&self) -> f32 { self.per }
-    pub fn pbr(&self) -> f32 { self.pbr }
-}
+use company::{ValueItem};
 
 pub fn get_values_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), String> {
     // get page string
@@ -59,6 +19,7 @@ pub fn get_values_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), Strin
         },
         Ok(x) => x
     };
+
     // parse html
     let decoder = parse_document(RcDom::default(), Default::default()).from_utf8();
     let mut html_bytes = html_str.as_bytes();
@@ -94,7 +55,7 @@ fn get_value_from_dom<'a>(dom : RcDom) -> Result<(f32, f32, f32), String> {
 }
 
 fn get_page_html<'a>(code : &str) -> Result<String, String> {
-    let base_url = "http://finance.naver.com/item/main.nhn?code=";
+    let base_url = "https://finance.naver.com/item/main.nhn?code=";
 
     // url
     let target_url = base_url.to_string() + code;
