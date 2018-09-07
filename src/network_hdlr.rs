@@ -1,7 +1,9 @@
 use hyper::client::Client;
+use hyper::Uri;
+use hyper::rt::Future;
 
 use html5ever::parse_document;
-use html5ever::rcdom::{RcDom, Handle, NodeEnum};
+use html5ever::rcdom::{RcDom, Handle, NodeData};
 use html5ever::tendril::TendrilSink;
 
 use encoding::{Encoding, DecoderTrap};
@@ -10,6 +12,8 @@ use encoding::all::WINDOWS_949;
 use std::io::Read;
 
 use company::{ValueItem};
+
+refer to https://github.com/servo/html5ever/blob/master/html5ever/examples/print-rcdom.rs for parsing
 
 pub fn get_values_with_code<'a>(code : &'a str) -> Result<(f32, f32, f32), String> {
     // get page string
@@ -55,19 +59,28 @@ fn get_value_from_dom<'a>(dom : RcDom) -> Result<(f32, f32, f32), String> {
 }
 
 fn get_page_html<'a>(code : &str) -> Result<String, String> {
-    let base_url = "https://finance.naver.com/item/main.nhn?code=";
+    // compose uri
+    let base_uri_str = "https://finance.naver.com/item/main.nhn?code=";
+    let target_uri_str = base_uri_str.to_string() + code;
+    let target_uri : Uri = target_uri_str.parse().unwrap();
 
-    // url
-    let target_url = base_url.to_string() + code;
-
-    // send request to server
+    // send request
     let client = Client::new();
-    let mut resp = match client.get(&target_url).send() {
+    let resp_future = client.get(target_uri);
+    let resp_result = resp_future.wait();
+    // get response
+    let resp = match resp_future.wait() {
         Err(x)  => {
             return Err(format!("{:?}", x));
         },
         Ok(x)   => x
     };
+    // check response
+    if !resp.status().is_success() {
+        return Err(format!("Not successful response!"));
+    }
+    // obtain body contents
+    let body = resp.body();
 
     // read html binary
     let mut buff = Vec::new();
